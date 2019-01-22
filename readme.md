@@ -13,3 +13,4 @@
 
 # NOTE
 * Add roles in RoleSeeder and Role Migration
+* Use '\u{20B1}' + numeral when numeral can't output Peso sign properly
