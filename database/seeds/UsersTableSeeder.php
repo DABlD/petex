@@ -21,6 +21,8 @@ class UsersTableSeeder extends Seeder
             'birthday' => '1997-11-12',
             'gender' => 'Female',
             'address' => 'Manila',
+            'lat' => 14.604119,
+            'lng' => 120.9864307,
             'contact' => '09123456789',
             'email_verified_at' => now()->toDateTimeString(),
             'password' => '123456'

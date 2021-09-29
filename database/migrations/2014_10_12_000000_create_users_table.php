@@ -25,6 +25,8 @@ class CreateUsersTable extends Migration
             $table->date('birthday');
             $table->string('gender');
             $table->text('address');
+            $table->text('lat');
+            $table->text('lng');
             $table->string('contact');
 
             $table->timestamp('email_verified_at')->nullable();
