@@ -37,7 +37,7 @@
                                         <li><a class="navnav" data-href="team" href="#">Our Team</a></li>
                                         <li><a class="navnav" data-href="contact" href="#">Contact Us</a></li>
                                         <li>
-                                            <a href="#" class="btn dento-btn booking-btn">Login</a>
+                                            <a href="#" class="btn dento-btn booking-btn">Sign In</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -220,6 +220,27 @@
 <script src="js/swal.js"></script>
 
 <script>
+        @if ($errors->any())    
+            swal({
+                type: 'error',
+                text: `
+                    @foreach ($errors->all() as $error)
+                        {{ $error }} "<br>;
+                    @endforeach
+                `
+            });
+        @endif
+
+        @if(Session::has('success'))
+            swal({
+                type: 'success',
+                title: '{{ Session::get('success') }}',
+                // text: 'Wait for your account to be confirmed'
+            });
+
+            {{Session::forget('success')}};
+        @endif
+
     $(".navnav").on("click", e => {
         $('html, body').animate({
             scrollTop: $("#" + $(e.target).data('href')).offset().top
@@ -232,17 +253,22 @@
             html: ` <input type="text" id="login" class="swal2-input" placeholder="Username">
                     <input type="password" id="password" class="swal2-input" placeholder="Password">`,
             confirmButtonText: 'Sign in',
-            focusConfirm: false,
+            showCancelButton: true,
+            cancelButtonText: 'Register',
+            cancelButtonColor: '#f76c6b',
+            showCloseButton: true,
+            focusConfirm: true,
             preConfirm: () => {
                 const login = $('#login').val();
                 const password = $('#password').val();
 
                 if (!login || !password) {
-                    swal.showValidationMessage(`Please enter username and password`)
+                    swal.showValidationError(`Please enter username and password`);
                 }
                 return { login: login, password: password }
             }
         }).then((result) => {
+            console.log(result);
             if(result.value){
                 $.ajax({
                     type: 'post',
@@ -272,6 +298,9 @@
                         }, 2000);
                     }
                 });
+            }
+            else if(result.cancel = 'dismiss'){
+                window.location.href = "{{ route('register') }}";
             }
         });
     });
