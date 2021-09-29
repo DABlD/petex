@@ -37,7 +37,13 @@
                                         <li><a class="navnav" data-href="team" href="#">Our Team</a></li>
                                         <li><a class="navnav" data-href="contact" href="#">Contact Us</a></li>
                                         <li>
-                                            <a href="#" class="btn dento-btn booking-btn">Sign In</a>
+                                            @auth
+                                                <a href="{{ route('dashboard') }}" class="btn dento-btn booking-btn">Dashboard</a>
+                                            @endauth
+
+                                            @guest
+                                                <a href="#" class="btn dento-btn booking-btn">Sign In</a>
+                                            @endguest
                                         </li>
                                     </ul>
                                 </div>
