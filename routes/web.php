@@ -50,7 +50,7 @@ Route::group([
 			->defaults('sidebar', 1)
 			->defaults('icon', 'fa-user')
 			->defaults('name', 'Dashboard')
-			->defaults('roles', array('Admin'))
+			->defaults('roles', array('Admin', 'Seller'))
 			->name('dashboard')
 			->defaults('href', 'dashboard');
 
@@ -72,6 +72,17 @@ Route::group([
 		Route::post('users/update', 'UsersController@update')->name('users.update');
 
 		Route::get('users/delete/{user}', 'UsersController@delete')->name('users.delete');
+
+		// SELLER
+
+		// PET ROUTES
+		Route::get('pets', 'PetController@index')
+			->defaults('sidebar', 1)
+			->defaults('icon', 'fa-paw')
+			->defaults('name', 'Pets')
+			->defaults('roles', array('Seller'))
+			->name('pets.index')
+			->defaults('href', 'pets');
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
