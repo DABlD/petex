@@ -39,7 +39,7 @@
   </div>
 
   <footer class="main-footer">
-    <strong>Copyright &copy; {{ $cpYear }} <a href="https://github.com/DABlD/" target="_blank">David Mendoza</a>.</strong> All rights
+    <strong>Copyright &copy; 2021 <a href="#">Average Minds</a>.</strong> All rights
     reserved.
   </footer>
 </div>
