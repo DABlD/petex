@@ -86,5 +86,6 @@ Route::group([
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
+		Route::get('datatables/pets', 'DatatablesController@pets')->name('datatables.pets');
 	}
 );

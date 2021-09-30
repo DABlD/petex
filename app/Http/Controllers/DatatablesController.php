@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\User;
+use App\Models\Pet;
 
 class DatatablesController extends Controller
 {
@@ -18,5 +19,16 @@ class DatatablesController extends Controller
 		}
 
     	return Datatables::of($users)->rawColumns(['actions'])->make(true);
+	}
+
+	public function pets(){
+		$pets = Pet::all();
+
+		// ADD USER ATTRIBUTES MANUALLY TO BE SEEN IN THE JSON RESPONSE
+		foreach($pets as $pet){
+			$pet->actions = $pet->actions;
+		}
+
+    	return Datatables::of($pets)->rawColumns(['actions'])->make(true);
 	}
 }

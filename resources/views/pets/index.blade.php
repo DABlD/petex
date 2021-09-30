@@ -11,138 +11,21 @@
 					@include('pets.includes.toolbar')
 				</div>
 
-				<section class="products">
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/1.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 1</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/2.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 2</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/3.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 3</h5><h4 style="color: red;"><b>SOLD</b></h4>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/1.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 4</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/2.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 5</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/3.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 6</h5><h4 style="color: red;"><b>SOLD</b></h4>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/1.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 7</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/2.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 8</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/3.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 9</h5><h4 style="color: red;"><b>SOLD</b></h4>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/1.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 10</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/2.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 11</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/3.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 12</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-		<div class="product-card">
-			<div class="product-image">
-				<img src="{{ asset('images/pets/1.jpg')}}">
-			</div>
-			<div class="product-info">
-				<h5>Pet 13</h5>
-				<h6>₱1,000.00</h6>
-			</div>
-		</div>
-		
-	</section>
+				<div class="box-body">
+					<table class="table table-hover table-bordered" id="table">
+						<thead>
+							<tr>
+								<th>Transaction ID</th>
+								<th>Name</th>
+								<th>Age</th>
+								<th>Price</th>
+								<th>Status</th>
+								<th>Listed On</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
 
 				<div class="box-footer clearfix">
 				</div>
@@ -156,48 +39,6 @@
 
 @push('after-styles')
 	<link rel="stylesheet" href="{{ asset('css/datatables.css') }}">
-
-	<style>
-		.products {
-			display: flex;
-			flex-wrap: wrap;
-		}
-
-		.product-card {
-			border-radius: 15px;
-			border: 2px solid #d2d6de;
-			margin-left: 10px;
-			margin-bottom: 10px;
-
-			display: flex;
-			flex-direction: column;
-			
-			padding: 2%;
-			/*flex: 1 20%;*/
-			width: 19%;
-			
-			background-color: #FFF;
-			box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.25);
-		}
-
-		.product-image img {
-			width: 100%;
-		}
-
-		.product-info {
-			margin-top: auto;
-			padding-top: 20px;
-			text-align: center;
-		}
-
-		@media ( max-width: 600px ) {
-			
-			.product-card {
-				flex: 1 46%;
-			}
-			
-		}
-	</style>	
 @endpush
 
 @push('before-scripts')
@@ -208,9 +49,148 @@
 
 @push('after-scripts')
 	<script>
+		let table = $('#table').DataTable({
+            serverSide: true,
+            ajax: '{{ route('datatables.pets') }}',
+            columns: [
+                { data: 'tid', name: 'tid' },
+                { data: 'name', name: 'name' },
+                { data: 'birthday', name: 'birthday' },
+                { data: 'price', name: 'price' },
+                { data: 'status', name: 'status' },
+                { data: 'created_at', name: 'created_at' },
+                { data: 'actions', name: 'actions' },
+            ],
+            columnDefs: [
+                {
+                    targets: [2],
+                    render: function(date){
+                        return toDate(date);
+                    }
+                },
+            ],
+            drawCallback: function(){
+                $('#table tbody').append('<div class="preloader"></div>');
+                // MUST NOT BE INTERCHANGED t-i
+                tooltip();
+            	initializeActions();
+            },
+            // order: [ [0, 'desc'] ],
+        });
 
-    	setTimeout(() => {
-    		$('.preloader').fadeOut();
-    	}, 2000);
+        table.on('draw', () => {
+        	setTimeout(() => {
+        		$('.preloader').fadeOut();
+        	}, 800);
+        });
+
+        function initializeActions(){
+	    	$('[data-original-title="View User"]').on('click', user => {
+	    		$.ajax({
+	    			url: 'users/get/' + $(user.target).data('id'),
+	    			success: user => {
+	    				user = JSON.parse(user);
+	    				let fields = "";
+
+	    				let names = [
+	    					'First Name', 'Middle Name', 'Last Name', 
+	    					'Birthday', 'Gender', 'Role',
+	    					'Contact', 'Created At'
+	    				];
+
+	    				let columns = [
+	    					'fname', 'mname', 'lname',
+	    					'birthday', 'gender', 'role',
+	    					'contact', 'created_at'
+	    				];
+
+	    				$.each(Object.keys(user), (index, key) => {
+	    					let temp = columns.indexOf(key);
+	    					if(temp >= 0){
+	    						fields += `
+									<div class="row">
+										<div class="col-md-3">
+											<h5><strong>` + names[temp] + `</strong></h5>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" value="` + user[key]+ `" readonly/>
+										</div>
+									</div>
+									<br id="` + key + `">
+								`;
+	    					}
+	    				});
+
+	    				swal({
+	    					title: 'User Details',
+	    					width: '50%',
+	    					html: `
+	    						<br><br>
+								<div class="row">
+									<div class="col-md-3">
+										<img src="` + user.avatar + `" alt="User Avatar" height="120px"/>
+									</div>
+									<div class="col-md-9">
+										` + fields + `
+									</div>
+								</div>
+	    					`,
+	    					onBeforeOpen: () => {
+	    						// CUSTOM FIELDS
+	    						$(`	<div class="row">
+										<div class="col-md-3">
+											<h5><strong>Address</strong></h5>
+										</div>
+										<div class="col-md-9">
+											<textarea type="text" class="form-control" readonly>`+ user.address +`</textarea>
+										</div>
+									</div>
+									<br id="address">`).insertAfter($('#role'));
+
+	    						$('h5').css('text-align', 'left');
+
+	    						// OPTIONAL
+	    						$('textarea').css('resize', 'none');
+
+	    						// MODIFIERS
+	    						let birthday = $($('#birthday')[0].previousElementSibling).find('.form-control');
+	    						birthday.val(toDate(birthday.val()));
+
+	    						let created_at = $($('#created_at')[0].previousElementSibling).find('.form-control');
+	    						created_at.val(toDateTime(created_at.val()));
+	    					}
+	    				});
+	    			}
+	    		});
+	    	});
+
+	    	$('[data-original-title="Edit User"]').on('click', user => {
+	    		window.location.href = "users/edit/" + $(user.target).data('id');
+	    	});
+
+	    	$('[data-original-title="Delete User"]').on('click', user => {
+	    		swal({
+	    			type: 'warning',
+	    			title: 'Are you sure you want to delete?',
+	    			showCancelButton: true,
+	    			allowOutsideClick: false,
+	    			cancelButtonColor: '#f76c6b',
+	    		}).then(choice => {
+	    			if(choice.value){
+	    				$.ajax({
+	    					url: 'users/delete/' + $(user.target).data('id'),
+	    					success: result => {
+	    						$('#table').DataTable().ajax.reload();
+
+	    						swalNotification(
+	    							result? 'success' : 'error',
+	    							result? 'Successfully deleted' : 'Try Again',
+	    						);
+	    					}
+	    				});
+	    			}
+	    		});
+	    	});
+        };
 	</script>
 @endpush

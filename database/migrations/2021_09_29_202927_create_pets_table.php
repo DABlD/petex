@@ -15,7 +15,13 @@ class CreatePetsTable extends Migration
     {
         Schema::create('pets', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps('image');
+            $table->string('tid', 13);
+            $table->string('name', 50);
+            $table->text('description')->nullable();
+            $table->date('birthday');
+            $table->float('price', 8, 2);
+            $table->enum('status', ['Available', 'Ordered', 'For Delivery', 'Delivered', 'Cancelled']);
+            $table->timestamps();
         });
     }
 
