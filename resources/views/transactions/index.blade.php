@@ -15,7 +15,7 @@
 					<table class="table table-hover table-bordered" id="table">
 						<thead>
 							<tr>
-								<th>Transaction ID</th>
+								{{-- <th>Transaction ID</th> --}}
 								<th>Name</th>
 								<th>Contact</th>
 								<th>Address</th>
@@ -46,6 +46,8 @@
 	<script src="{{ asset('js/datatables.js') }}"></script>
 	<script src="{{ asset('js/moment.js') }}"></script>
 	<script src="{{ asset('js/custom.js') }}"></script>
+
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o"></script>
 @endpush
 
 @push('after-scripts')
@@ -54,7 +56,7 @@
             serverSide: true,
             ajax: '{{ route('datatables.transactions') }}',
             columns: [
-                { data: 'tid', name: 'tid' },
+                // { data: 'tid', name: 'tid' },
                 { data: 'fname', name: 'fname' },
                 { data: 'contact', name: 'contact' },
                 { data: 'address', name: 'address' },
@@ -65,11 +67,23 @@
             ],
             columnDefs: [
                 {
-                    targets: [6],
+                    targets: [5],
                     render: function(date){
-                        return toDate(date);
+                        return toDateTime(date);
                     }
                 },
+                {
+                	targets: [0],
+                    render: function(a,b,row){
+                        return row.fname + " " + row.lname;
+                    }
+                },
+                {
+                	targets: [3],
+                    render: function(price){
+                        return parseFloat(price).toFixed(2);
+                    }
+                }
             ],
             drawCallback: function(){
                 $('#table tbody').append('<div class="preloader"></div>');
@@ -85,6 +99,9 @@
         		$('.preloader').fadeOut();
         	}, 800);
         });
+
+        // MAPS
+        var distance;
 
         function initializeActions(){
 	    	$('[data-original-title="View User"]').on('click', user => {
@@ -166,37 +183,79 @@
 	    		});
 	    	});
 
-	    	$('[data-original-title="Edit User"]').on('click', user => {
-	    		window.location.href = "users/edit/" + $(user.target).data('id');
-	    	});
-
-	    	$('[data-original-title="Delete User"]').on('click', user => {
+	    	$('[data-original-title="Cancel"]').on('click', elem => {
 	    		swal({
 	    			type: 'warning',
-	    			title: 'Are you sure you want to delete?',
+	    			title: 'Are you sure you want to cancel?',
 	    			showCancelButton: true,
 	    			allowOutsideClick: false,
 	    			cancelButtonColor: '#f76c6b',
 	    		}).then(choice => {
 	    			if(choice.value){
 	    				$.ajax({
-	    					url: 'users/delete/' + $(user.target).data('id'),
+	    					url: "cancel/" + $(elem.target).data('id'),
 	    					success: result => {
 	    						$('#table').DataTable().ajax.reload();
 
 	    						swalNotification(
 	    							result? 'success' : 'error',
-	    							result? 'Successfully deleted' : 'Try Again',
+	    							result? 'Successfully Cancelled' : 'Try Again',
 	    						);
 	    					}
 	    				});
 	    			}
 	    		});
 	    	});
-        };
 
-        function addPet(){
-        	console.log('asd0');
-        }
+	    	$('[data-original-title="Find Driver"]').on('click', elem => {
+	    		swal('Finding Driver');
+	    		swal.showLoading();
+
+	    		$.ajax({
+	    			url: "{{ route('getDriversLocation') }}",
+	    			success: result => {
+	    				result = JSON.parse(result);
+	    				
+	    				var closest = {distance: 1000};
+
+	    				result.forEach(rider => {
+            				distance = new google.maps.DistanceMatrixService();
+
+            				distance.getDistanceMatrix(
+            				  {
+            				    origins: [
+            				    	{
+            				    		lat: parseFloat(rider.lat),
+            				    		lng: parseFloat(rider.lng)
+            				    	}
+            				    ],
+            				    destinations: [
+            				    	{
+            				    		lat: parseFloat(rider.lat2),
+            				    		lng: parseFloat(rider.lng2)
+            				    	}
+            				    ],
+            				    travelMode: 'DRIVING',
+            				  }, callback);
+
+            				function callback(response, status) {
+            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
+            				    if(rider.distance < closest.distance){
+            				    	closest = rider;
+            				    }
+            				}
+	    				});
+
+	    				setTimeout(() => {
+		    				swal({
+		    					type: 'info',
+		    					title: 'Driver Found!',
+		    					text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname
+		    				});
+	    				}, 1000);
+	    			}
+	    		});
+	    	});
+        };
 	</script>
 @endpush

@@ -86,8 +86,15 @@ Route::group([
 
 		Route::get('book-now', 'BookingController@index')->name('book-now');
 		Route::get('getUserAddress', 'BookingController@getUserAddress')->name('getUserAddress');
+		Route::get('cancel/{id}', 'BookingController@cancel')->name('cancel');
 
 		Route::post('create', 'BookingController@create')->name('transactions.store');
+
+
+
+
+		Route::get('uploadLocation', 'BookingController@uploadLocation')->name('uploadLocation');
+		Route::get('getDriversLocation', 'BookingController@getDriversLocation')->name('getDriversLocation');
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');

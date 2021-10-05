@@ -76,9 +76,9 @@
                                 <p style="margin-bottom: 3px;">Total: </p>
                             </div>
                             <div class="col-md-2">
-                                <p style="margin-bottom: 3px;">&#8369;50.00</p>
+                                <p style="margin-bottom: 3px;">&#8369;300.00</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="overM">0.00</span> (Distance: <span id="distance">0.0</span> KM)</p>
-                                <p style="margin-bottom: 3px;">&#8369;<span id="total">50.00</span></p>
+                                <p style="margin-bottom: 3px;">&#8369;<span id="total">300.00</span></p>
                             </div>
                         </div>
 
@@ -173,7 +173,7 @@
 @push('before-scripts')
     <script src="{{ asset('js/flatpickr.js') }}"></script>
     <script src="{{ asset('js/moment.js') }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places" async></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
 @endpush
 
 @push('after-scripts')
@@ -252,13 +252,15 @@
         }
 
         // MAPS
-        navigator.geolocation.getCurrentPosition(position => {
-            initMap(position.coords.latitude, position.coords.longitude)
-        });
-
         var directionsService;
         var directionsRenderer;
         let distance;
+
+        function mapInit(){
+            navigator.geolocation.getCurrentPosition(position => {
+                initMap(position.coords.latitude, position.coords.longitude)
+            });
+        }
 
         function initMap(lat, lng){
             directionsService = new google.maps.DirectionsService();
@@ -314,12 +316,6 @@
                     $('#lat').val(place.geometry.location.lat());
                     $('#lng').val(place.geometry.location.lng());
 
-                  markers.push(
-                    new google.maps.Marker({
-                      map,
-                      position: place.geometry.location,
-                    })
-                  );
                   if (place.geometry.viewport) {
                     // Only geocodes have viewport.
                     bounds.union(place.geometry.viewport);
@@ -328,6 +324,10 @@
                   }
                 });
                 map.fitBounds(bounds);
+
+                setTimeout(() => {
+                    calculate();
+                }, 500);
               });
 
             // CLLICK LISTENER
@@ -343,6 +343,10 @@
 
                 $('#lat').val(mapsMouseEvent.latLng.lat());
                 $('#lng').val(mapsMouseEvent.latLng.lng());
+
+                setTimeout(() => {
+                    calculate();
+                }, 500);
             });
         }
 
@@ -380,21 +384,15 @@
                   }, callback);
 
                 function callback(response, status) {
-                    console.log(response.rows[0].elements[0].distance.text);
-                    console.log(response.rows[0].elements[0].duration.text);
-                    console.log(response.rows[0].elements[0].distance);
-                    console.log(response.rows[0].elements[0].duration);
-
                     let distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
                     let duration = response.rows[0].elements[0].duration.valu / 60;
 
-                    if(Math.ceil(distance) > 2){
-                        let temp = (Math.ceil(distance - 2) * 6).toFixed(2);
-                        $('#overM').text(temp);
-                        $('#distance').text(distance - 2);
-                        $('#total').text((50.00 + parseFloat(temp)).toFixed(2));
-                        $('#price').val((50.00 + parseFloat(temp)).toFixed(2));
-                    }
+                    let temp = distance <= 2 ? distance * 0 : (Math.ceil(distance - 2) * 6).toFixed(2);
+                    
+                    $('#overM').text(temp);
+                    $('#distance').text(distance);
+                    $('#total').text((300.00 + parseFloat(temp)).toFixed(2));
+                    $('#price').val((300.00 + parseFloat(temp)).toFixed(2));
                 }
             }
         }

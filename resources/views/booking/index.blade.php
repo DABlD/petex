@@ -250,7 +250,7 @@
 <script src="{{ asset('js/homepage/dento.bundle.js') }}"></script>
 <script src="{{ asset('js/homepage/active.js') }}"></script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places" async></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
 
 {{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&callback=initMap&v=weekly" async></script> --}}
 
@@ -406,15 +406,18 @@
         });
 
         // MAPS
-        navigator.geolocation.getCurrentPosition(position => {
-            initMap(position.coords.latitude, position.coords.longitude)
-        });
-
-
-
         var directionsService;
         var directionsRenderer;
         let distance;
+
+        function mapInit(){
+            setTimeout(() => {
+                navigator.geolocation.getCurrentPosition(position => {
+                    initMap(position.coords.latitude, position.coords.longitude)
+                });
+                console.log('init');
+            }, 5000);
+        }
 
         function initMap(lat, lng){
             directionsService = new google.maps.DirectionsService();

@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\PetAttribute;
 
 class Pet extends Model
 {
-    use PetAttribute;
 
     protected $fillable = [
         'tid', 'name', 'birthday', 

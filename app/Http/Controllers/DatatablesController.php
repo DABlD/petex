@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\User;
-use App\Models\Pet;
+use App\Models\Transactions;
 
 class DatatablesController extends Controller
 {
@@ -22,7 +22,7 @@ class DatatablesController extends Controller
 	}
 
 	public function transactions(){
-		$transactions = Pet::all();
+		$transactions = Transactions::where('sid', auth()->user()->id)->get();
 
 		// ADD USER ATTRIBUTES MANUALLY TO BE SEEN IN THE JSON RESPONSE
 		foreach($transactions as $transaction){

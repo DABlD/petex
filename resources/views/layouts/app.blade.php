@@ -72,6 +72,32 @@
       });
     @endif
 
+    function uploadLocation(){
+      navigator.geolocation.getCurrentPosition(position => {
+          initMap(position.coords.latitude, position.coords.longitude)
+      });
+
+    }
+    
+    function initMap(lat, lng){
+      $.ajax({
+        url: '{{ route('uploadLocation') }}',
+        data: {
+          lat: lat,
+          lng: lng
+        },
+        success: result => {
+          setTimeout(() => {
+            uploadLocation();
+          }, 5000);
+        }
+      })
+    }
+
+    @if(auth()->user()->role == "Rider")
+      uploadLocation();
+    @endif
+
   </script>
 
   @stack('before-scripts')
