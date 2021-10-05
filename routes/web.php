@@ -75,17 +75,22 @@ Route::group([
 
 		// SELLER
 
-		// PET ROUTES
-		Route::get('pets', 'PetController@index')
+		// Transactions ROUTES
+		Route::get('transactions', 'TransactionsController@index')
 			->defaults('sidebar', 1)
-			->defaults('icon', 'fa-paw')
-			->defaults('name', 'Pets')
+			->defaults('icon', 'fa-file-archive-o')
+			->defaults('name', 'Transactions')
 			->defaults('roles', array('Seller'))
-			->name('pets.index')
-			->defaults('href', 'pets');
+			->name('transactions.index')
+			->defaults('href', 'transactions');
+
+		Route::get('book-now', 'BookingController@index')->name('book-now');
+		Route::get('getUserAddress', 'BookingController@getUserAddress')->name('getUserAddress');
+
+		Route::post('create', 'BookingController@create')->name('transactions.store');
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
-		Route::get('datatables/pets', 'DatatablesController@pets')->name('datatables.pets');
+		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');
 	}
 );

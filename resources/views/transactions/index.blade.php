@@ -8,7 +8,7 @@
 			<div class="box box-info">
 
 				<div class="box-header">
-					@include('transactions.includes.toolbar')
+					@include('booking.includes.toolbar')
 				</div>
 
 				<div class="box-body">
@@ -17,7 +17,8 @@
 							<tr>
 								<th>Transaction ID</th>
 								<th>Name</th>
-								<th>Age</th>
+								<th>Contact</th>
+								<th>Address</th>
 								<th>Price</th>
 								<th>Status</th>
 								<th>Listed On</th>
@@ -51,11 +52,12 @@
 	<script>
 		let table = $('#table').DataTable({
             serverSide: true,
-            ajax: '{{ route('datatables.pets') }}',
+            ajax: '{{ route('datatables.transactions') }}',
             columns: [
                 { data: 'tid', name: 'tid' },
-                { data: 'name', name: 'name' },
-                { data: 'birthday', name: 'birthday' },
+                { data: 'fname', name: 'fname' },
+                { data: 'contact', name: 'contact' },
+                { data: 'address', name: 'address' },
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at' },
@@ -63,7 +65,7 @@
             ],
             columnDefs: [
                 {
-                    targets: [2],
+                    targets: [6],
                     render: function(date){
                         return toDate(date);
                     }

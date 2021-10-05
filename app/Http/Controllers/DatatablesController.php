@@ -21,14 +21,14 @@ class DatatablesController extends Controller
     	return Datatables::of($users)->rawColumns(['actions'])->make(true);
 	}
 
-	public function pets(){
-		$pets = Pet::all();
+	public function transactions(){
+		$transactions = Pet::all();
 
 		// ADD USER ATTRIBUTES MANUALLY TO BE SEEN IN THE JSON RESPONSE
-		foreach($pets as $pet){
-			$pet->actions = $pet->actions;
+		foreach($transactions as $transaction){
+			$transaction->actions = $transaction->actions;
 		}
 
-    	return Datatables::of($pets)->rawColumns(['actions'])->make(true);
+    	return Datatables::of($transactions)->rawColumns(['actions'])->make(true);
 	}
 }

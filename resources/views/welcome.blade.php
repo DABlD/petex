@@ -273,8 +273,10 @@
                 }
                 return { login: login, password: password }
             }
-        }).then((result) => {
+        }).then(result => {
             console.log(result);
+            console.log(result.cancel);
+            console.log(result.cancel == "dismiss");
             if(result.value){
                 $.ajax({
                     type: 'post',
@@ -305,7 +307,7 @@
                     }
                 });
             }
-            else if(result.cancel = 'dismiss'){
+            else if(result.dismiss == 'cancel'){
                 window.location.href = "{{ route('register') }}";
             }
         });
