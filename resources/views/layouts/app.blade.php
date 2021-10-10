@@ -74,12 +74,11 @@
 
     function uploadLocation(){
       navigator.geolocation.getCurrentPosition(position => {
-          initMap(position.coords.latitude, position.coords.longitude)
+          initMap2(position.coords.latitude, position.coords.longitude)
       });
-
     }
     
-    function initMap(lat, lng){
+    function initMap2(lat, lng){
       $.ajax({
         url: '{{ route('uploadLocation') }}',
         data: {

@@ -184,27 +184,37 @@
 	    	});
 
 	    	$('[data-original-title="Cancel"]').on('click', elem => {
-	    		swal({
-	    			type: 'warning',
-	    			title: 'Are you sure you want to cancel?',
-	    			showCancelButton: true,
-	    			allowOutsideClick: false,
-	    			cancelButtonColor: '#f76c6b',
-	    		}).then(choice => {
-	    			if(choice.value){
-	    				$.ajax({
-	    					url: "cancel/" + $(elem.target).data('id'),
-	    					success: result => {
-	    						$('#table').DataTable().ajax.reload();
+	    		if($(elem.target).data('status') == "Cancelled"){
+	    			swal({
+	    				type: 'info',
+	    				title: 'This transaction has already been cancelled',
+	    				timer: 1500,
+	    				showConfirmButton: false
+	    			})
+	    		}
+	    		else{
+		    		swal({
+		    			type: 'warning',
+		    			title: 'Are you sure you want to cancel?',
+		    			showCancelButton: true,
+		    			allowOutsideClick: false,
+		    			cancelButtonColor: '#f76c6b',
+		    		}).then(choice => {
+		    			if(choice.value){
+		    				$.ajax({
+		    					url: "cancel/" + $(elem.target).data('id'),
+		    					success: result => {
+		    						$('#table').DataTable().ajax.reload();
 
-	    						swalNotification(
-	    							result? 'success' : 'error',
-	    							result? 'Successfully Cancelled' : 'Try Again',
-	    						);
-	    					}
-	    				});
-	    			}
-	    		});
+		    						swalNotification(
+		    							result? 'success' : 'error',
+		    							result? 'Successfully Cancelled' : 'Try Again',
+		    						);
+		    					}
+		    				});
+		    			}
+		    		});
+	    		}
 	    	});
 
 	    	$('[data-original-title="Find Driver"]').on('click', elem => {
@@ -215,44 +225,68 @@
 	    			url: "{{ route('getDriversLocation') }}",
 	    			success: result => {
 	    				result = JSON.parse(result);
-	    				
-	    				var closest = {distance: 1000};
 
-	    				result.forEach(rider => {
-            				distance = new google.maps.DistanceMatrixService();
+	    				if(result.length == 0){
+	    					swal({
+	    						type: 'error',
+	    						title: 'No driver available at the moment',
+	    						text: 'Try again later',
+	    					});
+	    				}
+	    				else{
+		    				var closest = {distance: 10};
+		    				var eta = "0";
 
-            				distance.getDistanceMatrix(
-            				  {
-            				    origins: [
-            				    	{
-            				    		lat: parseFloat(rider.lat),
-            				    		lng: parseFloat(rider.lng)
-            				    	}
-            				    ],
-            				    destinations: [
-            				    	{
-            				    		lat: parseFloat(rider.lat2),
-            				    		lng: parseFloat(rider.lng2)
-            				    	}
-            				    ],
-            				    travelMode: 'DRIVING',
-            				  }, callback);
+		    				result.forEach(rider => {
+	            				distance = new google.maps.DistanceMatrixService();
 
-            				function callback(response, status) {
-            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
-            				    if(rider.distance < closest.distance){
-            				    	closest = rider;
-            				    }
-            				}
-	    				});
+	            				distance.getDistanceMatrix(
+	            				  {
+	            				    origins: [
+	            				    	{
+	            				    		lat: parseFloat(rider.lat),
+	            				    		lng: parseFloat(rider.lng)
+	            				    	}
+	            				    ],
+	            				    destinations: [
+	            				    	{
+	            				    		lat: parseFloat(rider.lat2),
+	            				    		lng: parseFloat(rider.lng2)
+	            				    	}
+	            				    ],
+	            				    travelMode: 'DRIVING',
+	            				  }, callback);
 
-	    				setTimeout(() => {
-		    				swal({
-		    					type: 'info',
-		    					title: 'Driver Found!',
-		    					text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname
+	            				function callback(response, status) {
+	            					eta = response.rows[0].elements[0].duration.text;
+	            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
+	            				    if(rider.distance < closest.distance){
+	            				    	closest = rider;
+	            				    }
+	            				}
 		    				});
-	    				}, 1000);
+
+		    				setTimeout(() => {
+		    					$.ajax({
+		    						url: "{{ route("assignDriver") }}",
+		    						data: {
+		    							tid: closest.id,
+		    							id: $(elem.target).data('id'),
+		    							eta: eta
+		    						},
+		    						success: result => {
+		    							swal({
+		    								type: 'info',
+		    								title: 'Driver Found!',
+		    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
+		    							}).then(() => {
+		    								$('#table').DataTable().ajax.reload();
+		    							});
+		    						}
+		    					});
+		    				}, 1000);
+	    				}
+	    				
 	    			}
 	    		});
 	    	});

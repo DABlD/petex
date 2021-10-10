@@ -52,7 +52,39 @@ class BookingController extends Controller
 	}
 
 	public function getDriversLocation(){
-		echo json_encode(User::where('role', 'Rider')->join('trackers', 'trackers.uid', '=', 'users.id')->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2'])->get());
+		echo json_encode(User::where('role', 'Rider')
+			->join('trackers', 'trackers.uid', '=', 'users.id')
+			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2'])
+			->get());
+	}
+
+	public function assignDriver(Request $req){
+		echo Transactions::where('id', $req->id)->update([
+			'tid' => $req->tid, 
+			'assigned_time' => now(), 
+			'status' => "For Pickup",
+			'eta' => $req->eta
+		]);
+	}
+
+	public function checkRiderDelivery(Request $req){
+		$temp = Transactions::where('tid', auth()->user()->id)
+						->select(
+							'transactions.*', 
+							'users.lat as slat', 
+							'users.lng as slng', 
+							'users.address as saddress',
+							'users.fname as sfname',
+							'users.lname as slname',
+							'users.contact as scontact',
+							'r.lat as rlat',
+							'r.lng as rlng'
+						)
+						->join('users', 'users.id', '=', 'transactions.sid')
+						->join('users as r', 'r.id', '=', 'transactions.tid')
+						->first();
+
+		echo json_encode($temp);
 	}
 
 	private function _view($view, $data = array()){
