@@ -85,6 +85,7 @@
 
 @push('before-scripts')
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
+    <script src="{{ asset('js/moment.js') }}"></script>
 @endpush
 
 @push('after-scripts')
@@ -135,50 +136,62 @@
         success: result => {
           result = JSON.parse(result);
 
-          if(result.status == "Cancelled"){
-            $('.box-title').html('Your last delivery was cancelled');
-          }
-          else{
-            sloc = {
-              lat: parseFloat(result.slat),
-              lng: parseFloat(result.slng)
-            };
-
-            dloc = {
-              lat: parseFloat(result.lat),
-              lng: parseFloat(result.lng)
+          if(result != null)
+          {
+            if(result.status == "Cancelled"){
+              $('.box-title').html('Your last delivery was cancelled');
             }
+            else{
+              sloc = {
+                lat: parseFloat(result.slat),
+                lng: parseFloat(result.slng)
+              };
 
-            rloc = {
-              lat: parseFloat(result.rlat),
-              lng: parseFloat(result.rlng)
-            }
+              dloc = {
+                lat: parseFloat(result.lat),
+                lng: parseFloat(result.lng)
+              }
 
-            // IF PICKUP
-            if(result.status == "For Pickup"){
-              showDirection(rloc, sloc);
+              rloc = {
+                lat: parseFloat(result.rlat),
+                lng: parseFloat(result.rlng)
+              }
 
-              let dMarker = new google.maps.Marker({
-                position: dloc,
-                map,
-                label: {
-                  color: 'white',
-                  text: 'D'
+              // IF PICKUP
+              if(result.status == "For Pickup"){
+                if(moment.duration(moment().diff(moment(result.created_at))).asSeconds() < 5)
+                {
+                  swal({
+                    title: 'You have a new delivery!'
+                  });
                 }
-              });
 
-              markers.push(dMarker);
+                $('.box-title').html('For Pickup');
+                showDirection(rloc, sloc);
+
+                let dMarker = new google.maps.Marker({
+                  position: dloc,
+                  map,
+                  label: {
+                    color: 'white',
+                    text: 'D'
+                  }
+                });
+
+                markers.push(dMarker);
+              }
+
+              // IF FOR DELIVERY
+              else if(result.status == "For Delivery"){
+                $('.box-title').html('For Delivery');
+                showDirection(rloc, dloc);
+              }
             }
-
-            // IF FOR DELIVERY
-            else if(result.status == "For Delivery"){
-              showDirection(rloc, dloc);
-            }
-
-            setTimeout(() => {
-              checkDelivery();
-            }, 10000);
           }
+
+          setTimeout(() => {
+            checkDelivery();
+          }, 5000);
         }
       });
     }
