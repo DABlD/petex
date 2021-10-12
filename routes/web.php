@@ -80,7 +80,7 @@ Route::group([
 			->defaults('sidebar', 1)
 			->defaults('icon', 'fa-file-archive-o')
 			->defaults('name', 'Transactions')
-			->defaults('roles', array('Seller'))
+			->defaults('roles', array('Seller', 'Admin'))
 			->name('transactions.index')
 			->defaults('href', 'transactions');
 

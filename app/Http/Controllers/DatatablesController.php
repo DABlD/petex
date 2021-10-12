@@ -22,12 +22,19 @@ class DatatablesController extends Controller
 	}
 
 	public function transactions(){
-		$transactions = Transactions::where('sid', auth()->user()->id)->get();
-
-		// ADD USER ATTRIBUTES MANUALLY TO BE SEEN IN THE JSON RESPONSE
-		foreach($transactions as $transaction){
-			$transaction->actions = $transaction->actions;
+		if(auth()->user()->role == "Admin"){
+			$transactions = Transactions::all();
+			foreach($transactions as $transaction){
+				$transaction->actions = "";
+			}
 		}
+		else{
+			$transactions = Transactions::where('sid', auth()->user()->id)->get();
+			foreach($transactions as $transaction){
+				$transaction->actions = $transaction->actions;
+			}
+		}
+		// ADD USER ATTRIBUTES MANUALLY TO BE SEEN IN THE JSON RESPONSE
 
     	return Datatables::of($transactions)->rawColumns(['actions'])->make(true);
 	}

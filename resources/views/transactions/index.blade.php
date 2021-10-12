@@ -22,7 +22,9 @@
 								<th>Price</th>
 								<th>Status</th>
 								<th>Listed On</th>
+								@if(auth()->user()->role != "Admin")
 								<th>Action</th>
+								@endif
 							</tr>
 						</thead>
 					</table>
@@ -63,7 +65,9 @@
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at' },
+                @if(auth()->user()->role != "Admin")
                 { data: 'actions', name: 'actions' },
+                @endif
             ],
             columnDefs: [
                 {
