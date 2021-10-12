@@ -94,6 +94,7 @@ Route::group([
 		Route::get('getDriversLocation', 'BookingController@getDriversLocation')->name('getDriversLocation');
 		Route::get('assignDriver', 'BookingController@assignDriver')->name('assignDriver');
 		Route::get('checkRiderDelivery', 'BookingController@checkRiderDelivery')->name('checkRiderDelivery');
+		Route::get('updateStatus', 'BookingController@updateStatus')->name('updateStatus');
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');

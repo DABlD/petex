@@ -192,6 +192,14 @@
 	    				showConfirmButton: false
 	    			})
 	    		}
+	    		else if($(elem.target).data('status') == "Delivered"){
+	    			swal({
+	    				type: 'info',
+	    				title: 'This transaction has already been completed',
+	    				timer: 1500,
+	    				showConfirmButton: false
+	    			})	
+	    		}
 	    		else{
 		    		swal({
 		    			type: 'warning',
@@ -290,6 +298,44 @@
 	    			}
 	    		});
 	    	});
+
+	    	$('[data-original-title="Already Picked-Up"]').on('click', elem => {
+	    		swal('Processing');
+	    		swal.showLoading();
+
+	    		let id = $(elem.target).data('id');
+
+	    		$.ajax({
+	    			url: "{{ route('updateStatus') }}",
+	    			data: {
+	    				id: id,
+	    				status: 'For Delivery',
+	    				pickup_time: moment().format('Y-MM-DD H:m:s')
+	    			},
+	    			success: result => {
+			            swal({
+			              type: 'success',
+			              title: 'Success',
+			              text: 'Completed!',
+			              showConfirmButton: false,
+			              timer: 2000
+			            });
+
+		    			$('#table').DataTable().ajax.reload();
+	    			}
+	    		})
+	    	});
         };
+
+    	// setTimeout(() => {
+    		renewTable();
+    	// }, 1000);
+
+    	function renewTable(){
+	    	$('#table').DataTable().ajax.reload();
+	    	setTimeout(() => {
+	    		renewTable();
+	    	}, 5000);
+    	}
 	</script>
 @endpush

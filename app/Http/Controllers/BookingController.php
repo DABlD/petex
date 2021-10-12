@@ -76,15 +76,19 @@ class BookingController extends Controller
 							'users.address as saddress',
 							'users.fname as sfname',
 							'users.lname as slname',
-							'users.contact as scontact',
-							'r.lat as rlat',
-							'r.lng as rlng'
+							'users.contact as scontact'
+							// 'r.lat as rlat',
+							// 'r.lng as rlng'
 						)
 						->join('users', 'users.id', '=', 'transactions.sid')
 						->join('users as r', 'r.id', '=', 'transactions.tid')
 						->first();
 
 		echo json_encode($temp);
+	}
+
+	public function updateStatus(Request $req){
+		echo Transactions::where('id', $req->id)->update($req->except(['_token', 'id']));
 	}
 
 	private function _view($view, $data = array()){
