@@ -23,7 +23,7 @@
 								<th>Status</th>
 								<th>Listed On</th>
 								@if(auth()->user()->role == "Seller")
-								<th>Action</th>
+									<th>Action</th>
 								@endif
 							</tr>
 						</thead>
@@ -66,7 +66,7 @@
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at' },
                 @if(auth()->user()->role == "Seller")
-                { data: 'actions', name: 'actions' },
+                	{ data: 'actions', name: 'actions' },
                 @endif
             ],
             columnDefs: [
@@ -246,7 +246,7 @@
 	    					});
 	    				}
 	    				else{
-		    				var closest = {distance: 10};
+		    				var closest = {distance: 100000};
 		    				var eta = "0";
 
 		    				result.forEach(rider => {
