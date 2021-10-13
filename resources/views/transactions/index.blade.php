@@ -22,7 +22,7 @@
 								<th>Price</th>
 								<th>Status</th>
 								<th>Listed On</th>
-								@if(auth()->user()->role != "Admin")
+								@if(auth()->user()->role == "Seller")
 								<th>Action</th>
 								@endif
 							</tr>
@@ -65,7 +65,7 @@
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at' },
-                @if(auth()->user()->role != "Admin")
+                @if(auth()->user()->role == "Seller")
                 { data: 'actions', name: 'actions' },
                 @endif
             ],

@@ -8,7 +8,7 @@ use App\Models\Transaction;
 class TransactionsController extends Controller
 {
     public function __construct(){
-        $this->middleware('permissions:' . 'Seller/Admin');
+        $this->middleware('permissions:' . 'Seller/Admin/Rider');
     }
 
     public function index(){

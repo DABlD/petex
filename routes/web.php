@@ -50,7 +50,7 @@ Route::group([
 			->defaults('sidebar', 1)
 			->defaults('icon', 'fa-user')
 			->defaults('name', 'Dashboard')
-			->defaults('roles', array('Admin', 'Seller'))
+			->defaults('roles', array('Admin', 'Seller', 'Rider'))
 			->name('dashboard')
 			->defaults('href', 'dashboard');
 
@@ -80,7 +80,7 @@ Route::group([
 			->defaults('sidebar', 1)
 			->defaults('icon', 'fa-file-archive-o')
 			->defaults('name', 'Transactions')
-			->defaults('roles', array('Seller', 'Admin'))
+			->defaults('roles', array('Seller', 'Admin', 'Rider'))
 			->name('transactions.index')
 			->defaults('href', 'transactions');
 

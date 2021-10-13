@@ -28,8 +28,14 @@ class DatatablesController extends Controller
 				$transaction->actions = "";
 			}
 		}
-		else{
+		else if(auth()->user()->role == "Seller"){
 			$transactions = Transactions::where('sid', auth()->user()->id)->get();
+			foreach($transactions as $transaction){
+				$transaction->actions = $transaction->actions;
+			}
+		}
+		else{
+			$transactions = Transactions::where('tid', auth()->user()->id)->get();
 			foreach($transactions as $transaction){
 				$transaction->actions = $transaction->actions;
 			}
