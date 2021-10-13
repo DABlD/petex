@@ -339,7 +339,7 @@
 	    	$('#table').DataTable().ajax.reload();
 	    	setTimeout(() => {
 	    		renewTable();
-	    	}, 5000);
+	    	}, 10000);
     	}
 	</script>
 @endpush
