@@ -329,6 +329,61 @@
 	    			}
 	    		})
 	    	});
+
+	    	$('[data-original-title="Check Driver Location"]').on('click', elem => {
+	    		let id = $(elem.target).data('id');
+      			var markers = [];
+
+	    		swal({
+	    			html: '<div id="map" style="width: 100%; height: 50vh;"></div>',
+	    			width: '80vh',
+	    			onOpen: () => {
+	    				navigator.geolocation.getCurrentPosition(position => {
+	    				    slat = position.coords.latitude;
+	    				    slng = position.coords.longitude;
+	    				    initMap(slat, slng);
+	    				});
+
+	    				function initMap(slat, slng){
+	    					markers.forEach((marker) => {
+	    					  marker.setMap(null);
+	    					});
+	    					markers = [];
+
+	    					$.ajax({
+	    						url: "{{ route('getDriverLocation') }}",
+	    						data: {
+	    							id: id
+	    						},
+	    						success: result => {
+	    							result = JSON.parse(result);
+	    							let loc = {lat: parseFloat(result.rlat), lng: parseFloat(result.rlng)};
+
+	    							map = new google.maps.Map(document.getElementById("map"), {
+	    							    center: loc,
+	    							    zoom: 12,
+	    							});
+
+	    							let dMarker = new google.maps.Marker({
+	    							  position: loc,
+	    							  map,
+	    							  label: {
+	    							    color: 'white',
+	    							    text: 'R'
+	    							  }
+	    							});
+
+                      				markers.push(dMarker);
+	    						}
+	    					});
+
+	    					setTimeout(() => {
+	    						initMap(slat, slng);
+	    					}, 5000);
+	    				}
+	    			}
+	    		});
+	    	});
         };
 
     	// setTimeout(() => {

@@ -58,6 +58,13 @@ class BookingController extends Controller
 			->get());
 	}
 
+	public function getDriverLocation(Request $req){
+		echo json_encode(User::where('users.id', $req->id)
+			->join('trackers', 'trackers.uid', '=', 'users.id')
+			->select(['users.*', 'trackers.lat as rlat', 'trackers.lng as rlng'])
+			->first());
+	}
+
 	public function assignDriver(Request $req){
 		echo Transactions::where('id', $req->id)->update([
 			'tid' => $req->tid, 

@@ -53,7 +53,7 @@ Route::group([
 			->defaults('roles', array('Admin', 'Seller', 'Rider'))
 			->name('dashboard')
 			->defaults('href', 'dashboard');
-			
+
 		Route::get('getData', 'DashboardController@getData')->name('getData');
 
 		// USER ROUTES
@@ -93,6 +93,7 @@ Route::group([
 		Route::post('create', 'BookingController@create')->name('transactions.store');
 
 		Route::get('uploadLocation', 'BookingController@uploadLocation')->name('uploadLocation');
+		Route::get('getDriverLocation', 'BookingController@getDriverLocation')->name('getDriverLocation');
 		Route::get('getDriversLocation', 'BookingController@getDriversLocation')->name('getDriversLocation');
 		Route::get('assignDriver', 'BookingController@assignDriver')->name('assignDriver');
 		Route::get('checkRiderDelivery', 'BookingController@checkRiderDelivery')->name('checkRiderDelivery');
