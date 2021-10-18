@@ -55,6 +55,16 @@
                                     </span>
                                 </div>
 
+                                <br>
+
+                                <div class="row">
+                                    <label for="comments">Comment</label>
+                                    <textarea class="form-control" name="comments" id="comments" placeholder="Enter comments" cols="30" rows="5"></textarea>
+                                    <span class="invalid-feedback hidden" role="alert">
+                                        <strong id="commentsError"></strong>
+                                    </span>
+                                </div>
+
                                 <input type="hidden" name="lat" id="lat">
                                 <input type="hidden" name="lng" id="lng">
                                 <input type="hidden" name="price" id="price">

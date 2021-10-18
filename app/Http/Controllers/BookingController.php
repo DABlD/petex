@@ -82,6 +82,7 @@ class BookingController extends Controller
 						)
 						->join('users', 'users.id', '=', 'transactions.sid')
 						->join('users as r', 'r.id', '=', 'transactions.tid')
+						->latest('created_at')
 						->first();
 
 		echo json_encode($temp);

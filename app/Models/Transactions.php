@@ -10,7 +10,7 @@ class Transactions extends Model
     use TransactionAttribute;
 
     protected $fillable = [
-        'sid', 'tid', 'fname', 'lname', 'contact', 'address', 'lat', 'lng', 'price', 'status'
+        'sid', 'tid', 'fname', 'lname', 'contact', 'address', 'lat', 'lng', 'price', 'status', 'comments'
     ];
 
     protected $dates = [

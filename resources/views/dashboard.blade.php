@@ -62,6 +62,7 @@
 
               <div class="box-header with-border">
                 <h3 class="box-title" style="color: red;">No Delivery</h3>
+                <h4 style="color: blue;">Comments: <span style="color: black;" class="comments"></span></h4>
                 <div class="pull-right">
                    <a class="btn btn-success hidden delivery" data-toggle="tooltip" title="Complete Delivery" data-id="">
                     <span class="fa fa-thumbs-up delivery" data-id=""></span>
@@ -188,6 +189,12 @@
 
                 if(result != null)
                 {
+                  $('.comments').html("N/A");
+
+                  if(result.comments != ""){
+                    $('.comments').html(result.comments);
+                  }
+                  
                   if(result.status == "Cancelled"){
                     $('.box-title').html('Your last delivery was cancelled');
                   }
