@@ -53,6 +53,8 @@ Route::group([
 			->defaults('roles', array('Admin', 'Seller', 'Rider'))
 			->name('dashboard')
 			->defaults('href', 'dashboard');
+			
+		Route::get('getData', 'DashboardController@getData')->name('getData');
 
 		// USER ROUTES
 		Route::get('users', 'UsersController@index')
