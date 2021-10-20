@@ -191,6 +191,34 @@
 	    			}
 	    		});
 	    	});
+
+	    	$('[data-original-title="View Files"]').on('click', user => {
+	    		let temp = $(user.target).data('files');
+
+	    		if(temp == "``"){
+	    			swal({
+	    				type: 'warning',
+	    				title: "No Files Submitted",
+	    				timer: 1500,
+	    				showConfirmButton: false
+	    			});
+	    		}
+	    		else{
+		    		let files = JSON.parse(temp.replace(/`/gi, ''));
+		    		// let files = $(user.target).data('files').replace(/`/gi, '\'');
+		    		swal({
+		    			width: "100vh",
+		    			html: `
+		    				<a target="_blank" href="${files[0]}">
+		    					<img src="${files[0]}" style="width: 50vh; height: 50vh;">
+		    				</a>
+		    				<a target="_blank" href="${files[0]}">
+		    					<img src="${files[1]}" style="width: 50vh; height: 50vh;">
+		    				</a>
+		    			`
+		    		})
+	    		}
+	    	});
         };
 	</script>
 @endpush

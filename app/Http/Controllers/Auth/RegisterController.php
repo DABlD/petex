@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use Image;
 
 class RegisterController extends Controller
 {
@@ -61,7 +62,25 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        event(new Registered($user = $this->create($request->all())));
+        // dd($request->all());     
+        $images = $request->file('files');
+        $files = [];
+
+        foreach($images as $image){
+            $temp = Image::make($image);
+            $rand = random_int(100000, 999999);
+
+            $name = $request->fname . '_' . $request->lname . "-$rand."  . $image->getClientOriginalExtension();
+
+            $destinationPath = public_path('uploads/');
+            $path = $destinationPath . $name;
+
+            array_push($files, "uploads/" . $name);
+            $temp->save($path);
+        }
+
+        $data = array_merge($request->except(["files"]), ["files" => json_encode($files)]);
+        event(new Registered($user = $this->create($data)));
 
         $request->session()->put('success', 'Successfully Registered');
 

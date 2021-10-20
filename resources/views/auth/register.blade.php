@@ -122,7 +122,7 @@
         <div class="col-12">
             <div class="appointment-form">
                 
-    <form method="POST" action="{{ route('register') }}" id="registerForm" style="color: white;">
+    <form method="POST" action="{{ route('register') }}" id="registerForm" style="color: white;" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
@@ -221,6 +221,22 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="form-group col-md-7" style="padding-left: 15px;">
+
+                <label for="files" style="color: yellow;">
+                    Note: Please upload the following Photocopy: <br>
+                    <b>SELLER</b> - Any Valid Government ID <br>
+                    <b>RIDER</b> - Drivers License and Vehicle Registration <br>
+                </label>
+
+                <input type="file" class="puwy" name="files[]" placeholder="Upload Files" multiple accept="image/*"><br>
+                <span class="invalid-feedback hidden" role="alert">
+                    <strong id="filesError"></strong>
+                </span>
+            </div>
+        </div>
+
         <input type="hidden" name="role" id="role">
 
         <br><br>
@@ -270,7 +286,8 @@
 
         // VALIDATE ON SUBMIT
         $('.submit').click(e => {
-            $('#role').val($(e.target).data('id'));
+            let role = $(e.target).data('id');
+            $('#role').val(role);
 
             let inputs = $('.puwy:not(".input")');
             
@@ -279,7 +296,7 @@
 
             $.each(inputs, (index, input) => {
                 let temp = $(input);
-                let error = $('#' + temp.attr('name') + 'Error');
+                let error = $('#' + temp.attr('name').replace(/\[\]/g, '') + 'Error');
                 bool = false;
 
                 if(input.value == ""){
@@ -294,6 +311,7 @@
                         },
                         success: result => {
                             result = JSON.parse(result);
+                            console.log(result);
                             if(typeof result[temp.attr('name')] != 'undefined'){
                                 showError(input, temp, error, result[temp.attr('name')][0]);
                             }
@@ -303,6 +321,27 @@
                 else if(temp.attr('name') == 'contact'){
                     if(!/^[0-9]*$/.test(input.value)){
                         showError(input, temp, error, 'Invalid Contact Number');
+                    }
+                }
+                else if(temp.attr('name') == 'files[]'){
+                    let errorMessage = "";
+                    
+                    if(role == "Seller"){
+                        if($(input)[0].files.length > 1){
+                            errorMessage = "You must upload only your valid government ID";
+                        }
+                    }
+                    else{
+                        if($(input)[0].files.length < 2){
+                            errorMessage = "You must upload your drivers license and vehicle registration";
+                        }
+                        else if($(input)[0].files.length > 2){
+                            errorMessage = "You must upload only your drivers license and vehicle registration";
+                        }
+                    }
+
+                    if(errorMessage != ""){
+                        showError(input, temp, error, errorMessage);
                     }
                 }
                 else if(temp.attr('name') == 'confirm_password'){
@@ -357,7 +396,7 @@
         function clearError(input, temp, error){
             if($(input).hasClass('is-invalid')){
                 if(input.type != 'hidden'){
-                    temp.removeClass('is-invalid');
+                    $(temp).removeClass('is-invalid');
                 }
                 else{
                     temp.removeClass('is-invalid');
