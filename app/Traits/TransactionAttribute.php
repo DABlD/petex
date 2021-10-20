@@ -21,6 +21,9 @@ trait TransactionAttribute{
 					   '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
 				   	        '<span class="fa fa-close" data-status="' . $this->status . '" data-id="' . $this->id . '"></span>' .
 				   	    '</a>&nbsp;' . 
+					   '<a class="btn btn-warning" data-toggle="tooltip" title="View Files" data-files=`' . $this->files . '`>' .
+					        '<span class="fa fa-file" data-files=`' . $this->files . '`></span>' .
+					   '</a>&nbsp;' .
 					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Driver Location" data-id="' . $this->tid . '">' .
 				   	        '<span class="fa fa-search" data-id="' . $this->tid . '"></span>' .
 				   	    '</a>&nbsp;';
@@ -32,6 +35,9 @@ trait TransactionAttribute{
 					   '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
 				   	        '<span class="fa fa-close" data-status="' . $this->status . '" data-id="' . $this->id . '"></span>' .
 				   	    '</a>&nbsp;' . 
+					   '<a class="btn btn-warning" data-toggle="tooltip" title="View Files" data-files=`' . $this->files . '`>' .
+					        '<span class="fa fa-files" data-files=`' . $this->files . '`></span>' .
+					   '</a>&nbsp;' .
 					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Driver Location" data-id="' . $this->tid . '">' .
 				   	        '<span class="fa fa-search" data-id="' . $this->tid . '"></span>' .
 				   	    '</a>&nbsp;';
