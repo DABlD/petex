@@ -276,6 +276,7 @@
 	    				}
 	    				else{
 		    				var closest = {distance: 100000};
+		    				var temp;
 		    				var eta = "0";
 
 		    				result.forEach(rider => {
@@ -302,12 +303,21 @@
 	            					eta = response.rows[0].elements[0].duration.text;
 	            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
 	            				    if(rider.distance < closest.distance){
-	            				    	closest = rider;
+	            				    	if(rider.ave_ratings >= 60){
+	            				    		closest = rider;
+	            				    	}
+	            				    	else{
+	            				    		temp = rider;
+	            				    	}
 	            				    }
 	            				}
 		    				});
 
 		    				setTimeout(() => {
+		    					if(closest.id == "" && temp != ""){
+		    						closest = temp;
+		    					}
+
 		    					$.ajax({
 		    						url: "{{ route("assignDriver") }}",
 		    						data: {
@@ -325,7 +335,7 @@
 		    							});
 		    						}
 		    					});
-		    				}, 1000);
+		    				}, 1500);
 	    				}
 	    				
 	    			}

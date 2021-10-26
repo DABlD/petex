@@ -52,10 +52,22 @@ class BookingController extends Controller
 	}
 
 	public function getDriversLocation(){
-		echo json_encode(User::where('role', 'Rider')
+		$drivers = User::where('role', 'Rider')
 			->join('trackers', 'trackers.uid', '=', 'users.id')
 			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2'])
-			->get());
+			->get();
+
+		foreach($drivers as $driver){
+			$transactions = Transactions::where([
+				['status', '=', 'Delivered'],
+				['tid', '=', $driver->id],
+				['rating', '!=', null]
+			])->pluck('rating');
+
+			$driver->ave_ratings = array_sum($transactions) / count($transactions);
+		}
+
+		echo json_encode($drivers);
 	}
 
 	public function getDriverLocation(Request $req){
@@ -76,21 +88,21 @@ class BookingController extends Controller
 
 	public function checkRiderDelivery(Request $req){
 		$temp = Transactions::where('tid', auth()->user()->id)
-						->select(
-							'transactions.*', 
-							'users.lat as slat', 
-							'users.lng as slng', 
-							'users.address as saddress',
-							'users.fname as sfname',
-							'users.lname as slname',
-							'users.contact as scontact'
-							// 'r.lat as rlat',
-							// 'r.lng as rlng'
-						)
-						->join('users', 'users.id', '=', 'transactions.sid')
-						->join('users as r', 'r.id', '=', 'transactions.tid')
-						->latest('created_at')
-						->first();
+			->select(
+				'transactions.*',
+				'users.lat as slat',
+				'users.lng as slng',
+				'users.address as saddress',
+				'users.fname as sfname',
+				'users.lname as slname',
+				'users.contact as scontact'
+				// 'r.lat as rlat',
+				// 'r.lng as rlng'
+			)
+			->join('users', 'users.id', '=', 'transactions.sid')
+			->join('users as r', 'r.id', '=', 'transactions.tid')
+			->latest('created_at')
+			->first();
 
 		echo json_encode($temp);
 	}
