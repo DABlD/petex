@@ -27,6 +27,7 @@ class AlterTransactionAddRiderCancel extends Migration
 
         Schema::table('transactions', function (Blueprint $table) {
             $table->timestamp('rider_cancel')->nullable()->after('status');
+            $table->smallInteger('rating')->nullable();
         });
     }
 
@@ -50,6 +51,7 @@ class AlterTransactionAddRiderCancel extends Migration
         
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropColumn('rider_cancel');
+            $table->dropColumn('rating');
         });
     }
 }

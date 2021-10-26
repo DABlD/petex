@@ -42,6 +42,12 @@
 
 @push('after-styles')
 	<link rel="stylesheet" href="{{ asset('css/datatables.css') }}">
+
+	<style>
+		.checked{
+			color: orange;
+		}
+	</style>
 @endpush
 
 @push('before-scripts')
@@ -434,6 +440,63 @@
 		    			`
 		    		})
 	    		}
+	    	});
+
+	    	$('[data-original-title="Rate Driver"]').on('click', e => {
+	    		let temp = $(e.target);
+	    		let id = temp.data('id');
+	    		let oRating = temp.data('rating');
+
+	    		swal({
+	    			html: `
+	    				<span class="fa fa-star fa-3x" id="1"></span>
+	    				<span class="fa fa-star fa-3x" id="2"></span>
+	    				<span class="fa fa-star fa-3x" id="3"></span>
+	    				<span class="fa fa-star fa-3x" id="4"></span>
+	    				<span class="fa fa-star fa-3x" id="5"></span>
+	    			`,
+	    			onOpen: () => {
+
+    					for(let i = 0; i < oRating; i++){
+    						$($('*[id].fa-star')[i]).addClass('checked');
+    					}
+
+	    				$('.fa-star').on('click', e => {
+	    					let rating = $(e.target).attr('id');
+
+	    					$('*[id].fa-star.checked').each((a,b) => {
+	    						$(b).removeClass('checked');
+	    					})
+
+	    					for(let i = 0; i < rating; i++){
+	    						$($('*[id].fa-star')[i]).addClass('checked');
+	    					}
+	    				})
+	    			}
+	    		}).then(result => {
+	    			if(result.value){
+	    				$.ajax({
+	    				  url: '{{ route('updateStatus') }}',
+	    				  data: {
+	    				    id: id,
+	    				    rating: $('*[id].fa-star.checked').length,
+	    				  },
+	    				  success: result => {
+	    				    setTimeout(() => {
+	    				      swal({
+	    				        type: 'success',
+	    				        title: 'Success',
+	    				        text: 'Completed!',
+	    				        showConfirmButton: false,
+	    				        timer: 1200
+	    				      });
+
+    							renewTable();
+	    				    });
+	    				  }
+	    				});
+	    			}
+	    		})
 	    	});
         };
 

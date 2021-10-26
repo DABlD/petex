@@ -42,6 +42,11 @@ trait TransactionAttribute{
 				   	        '<span class="fa fa-search" data-id="' . $this->tid . '"></span>' .
 				   	    '</a>&nbsp;';
 			}
+			else if($this->status == "Delivered"){
+				return 	'<a class="btn btn-primary" data-toggle="tooltip" title="Rate Driver" data-id="' . $this->id . '" data-rating="' . $this->rating . '">' .
+					        '<span class="fa fa-star" data-id="' . $this->id . '" data-rating="' . $this->rating . '"></span>' .
+					   '</a>&nbsp;';
+			}
 			else{
 				return '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
 				   	        '<span class="fa fa-close" data-status="' . $this->status . '" data-id="' . $this->id . '"></span>' .
