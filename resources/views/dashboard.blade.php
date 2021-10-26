@@ -63,11 +63,23 @@
               <div class="box-header with-border">
                 <h3 class="box-title" style="color: red;">No Delivery</h3>
                 <h4 style="color: blue;">Comments: <span style="color: black;" class="comments"></span></h4>
-                <div class="pull-right">
+
+
+
+
+                <div class="pull-right" style="position: absolute; top: 5px; right: 5px;">
                    <a class="btn btn-success hidden delivery" data-toggle="tooltip" title="Complete Delivery" data-id="">
                     <span class="fa fa-thumbs-up delivery" data-id=""></span>
                   </a>
                 </div>
+
+                <div class="pull-right" style="position: absolute; top: 5px; right: 5px;">
+                   <a class="btn btn-danger cancelBooking" data-toggle="tooltip" title="Decline Booking" data-id="">
+                    <span class="fa fa-times cancelBooking" data-id=""></span>
+                  </a>
+                </div>
+                
+
               </div>
 
               <div class="box-body">
@@ -187,6 +199,8 @@
                 $('.delivery').data('id', result.id);
                 $('.delivery').addClass('hidden');
 
+                $('.cancelBooking').data('id', result.id);
+
                 if(result != null)
                 {
                   $('.comments').html("N/A");
@@ -299,6 +313,41 @@
             });
           }
         });
+      });
+
+      $('.cancelBooking').on('click', elem => { 
+
+        swal({
+          type: 'warning',
+          title: 'Are you sure you want to decline?',
+          showCancelButton: true,
+          cancelButtonColor: '#f76c6b',
+        }).then(result => {
+          if(result.value){
+            swal('Processing');
+            swal.showLoading();
+
+            $('.cancelBooking').addClass('hidden');
+            $.ajax({
+              url: '{{ route('updateStatus') }}',
+              data: {
+                id: $(elem.target).data('id'),
+                status: 'Rider Cancel',
+              },
+              success: result => {
+                setTimeout(() => {
+                  swal({
+                    type: 'success',
+                    title: 'Success',
+                    text: 'Completed!',
+                    showConfirmButton: false,
+                    timer: 2000
+                  });
+                });
+              }
+            });
+          }
+        })
       });
     @else
       function mapInit(){

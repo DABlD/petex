@@ -87,6 +87,29 @@
                     render: function(price){
                         return parseFloat(price).toFixed(2);
                     }
+                },
+                {
+                	targets: [4],
+                    render: function(status, x, row){
+                    	if(row.status == "Rider Cancel" && row.rider_cancel == null){
+                    		swal({
+                    			type: 'info',
+                    			title: `Delivery to ${row.fname} ${row.lname} on ${row.address} has been cancelled by the rider`
+                    		}).then(() => {
+					            $.ajax({
+					              url: '{{ route('updateStatus') }}',
+					              data: {
+					                id: row.id,
+					                rider_cancel: moment().format("YYYY-MM-DD hh:mm:ss"),
+					              },
+					              success: result => {
+					              	console.log("rider_cancel", result);
+					              }
+					            });
+                    		})
+                    	}
+                        return status;
+                    }
                 }
             ],
             drawCallback: function(){

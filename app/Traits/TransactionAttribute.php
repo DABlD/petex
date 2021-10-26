@@ -6,7 +6,7 @@ trait TransactionAttribute{
 
 	public function getActionsAttribute(){
 		if(auth()->user()->role != "Admin"){
-			if($this->status == "To Process"){
+			if($this->status == "To Process" || $this->status == "Rider Cancel"){
 				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Driver" data-id="' . $this->id . '">' .
 					        '<span class="fa fa-search" data-id="' . $this->id . '"></span>' .
 					   '</a>&nbsp;' . 
