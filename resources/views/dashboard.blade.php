@@ -102,7 +102,7 @@
 
               <div class="box-body">
                 
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <canvas id="chart-1"></canvas>
                 </div>
 
@@ -326,7 +326,7 @@
            data: {
              labels: [],
              datasets: [{
-               label: "Select Timeframe",
+               label: "Number of Transactions from selected date range",
                backgroundColor: 'rgb(255, 99, 132)',
                borderColor: 'rgb(255, 99, 132)',
                data: []
