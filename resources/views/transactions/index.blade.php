@@ -314,7 +314,7 @@
 		    				});
 
 		    				setTimeout(() => {
-		    					if(closest.id == "" && temp != ""){
+		    					if(closest.id == undefined && temp != ""){
 		    						closest = temp;
 		    					}
 
