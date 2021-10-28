@@ -62,7 +62,7 @@ class BookingController extends Controller
 				['status', '=', 'Delivered'],
 				['tid', '=', $driver->id],
 				['rating', '!=', null]
-			])->pluck('rating');
+			])->pluck('rating')->toArray();
 
 			$driver->ave_ratings = array_sum($transactions) / count($transactions);
 		}
