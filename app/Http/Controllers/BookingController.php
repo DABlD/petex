@@ -58,7 +58,13 @@ class BookingController extends Controller
 			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2'])
 			->get();
 
-		foreach($drivers as $driver){
+		foreach($drivers as $key => $driver){
+			$temp = Transactions::where('tid', $driver->id)->whereIn('status', ['For Pickup','For Delivery'])->get()->count();
+			if($temp){
+				unset($drivers[$key]);
+				continue;
+			}
+
 			$transactions = Transactions::where([
 				['status', '=', 'Delivered'],
 				['tid', '=', $driver->id],
