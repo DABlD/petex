@@ -15,11 +15,12 @@ class DashboardController extends Controller
 	    		'title' => 'Dashboard',
 	    		'users' => User::all()->count(),
 	    		'ongoing' => Transactions::where([
-	    			['status', '!=', 'cancelled'],
-	    			['status', '!=', 'delivered'],
+	    			['status', '!=', 'Cancelled'],
+	    			['status', '!=', 'Delivered'],
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::whereRaw('Date(created_at) = CURDATE()')->get()->count(),
-	    		'cancelled' => Transactions::where('status', 'cancelled')->whereRaw('Date(created_at) = CURDATE()')->get()->count()
+	    		'cancelled' => Transactions::where('status', 'Cancelled')->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
+	    		'all_cancelled' => json_encode(Transactions::whereIn('status', ['Cancelled', 'Rider Cancel'])->select(['lat', 'lng'])->get()),
 	    	]);
 	    }
 	    else if(auth()->user()->role == "Seller"){
@@ -27,14 +28,14 @@ class DashboardController extends Controller
 	    		'title' => 'Dashboard',
 	    		'users' => User::all()->count(),
 	    		'ongoing' => Transactions::where([
-	    			['status', '!=', 'cancelled'],
-	    			['status', '!=', 'delivered'],
+	    			['status', '!=', 'Cancelled'],
+	    			['status', '!=', 'Delivered'],
 	    			['sid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::where('sid', auth()->user()->id)->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'totalTransactions' => Transactions::where('sid', auth()->user()->id)->get()->count(),
 	    		'cancelled' => Transactions::where([
-	    			['status', '=', 'cancelled'],
+	    			['status', '=', 'Cancelled'],
 	    			['sid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count()
 	    	]);
@@ -44,14 +45,14 @@ class DashboardController extends Controller
 	    		'title' => 'Dashboard',
 	    		'users' => User::all()->count(),
 	    		'ongoing' => Transactions::where([
-	    			['status', '!=', 'cancelled'],
-	    			['status', '!=', 'delivered'],
+	    			['status', '!=', 'Cancelled'],
+	    			['status', '!=', 'Delivered'],
 	    			['tid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::where('tid', auth()->user()->id)->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'totalTransactions' => Transactions::where('tid', auth()->user()->id)->get()->count(),
 	    		'cancelled' => Transactions::where([
-	    			['status', '=', 'cancelled'],
+	    			['status', '=', 'Cancelled'],
 	    			['tid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count()
 	    	]);

@@ -142,6 +142,22 @@
                 </div>
 
               </div>
+
+              @if(auth()->user()->role == "Admin")
+                <hr style="width: 95%; border-top: 1px solid grey;">
+                  <center>
+                    <h4 style="color: #f76c6b;">
+                      <b>
+                        Heatmap of Cancelled Bookings
+                      </b>
+                    </h4>
+                  </center>
+                <hr style="width: 95%; border-top: 1px solid grey;">
+              <div class="box-body">
+                  <div id="map" style="width: 100%; height: 80vh; position: block;"></div>
+              </div>
+
+              @endif
               <div class="box-footer clearfix">
               </div>
 
@@ -159,7 +175,7 @@
 @endpush
 
 @push('before-scripts')
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&libraries=visualization&callback=mapInit"></script>
     <script src="{{ asset('js/moment.js') }}"></script>
     <script src="{{ asset('js/charts.min.js') }}"></script>
     <script src="{{ asset('js/flatpickr.js') }}"></script>
@@ -200,6 +216,13 @@
 
         directionsRenderer.setMap(map);
         checkDelivery(map.center);
+      }
+
+      function initMap2(lat, lng){
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {lat: lat, lng: lng},
+            zoom: 12,
+        });
       }
 
       // CHECK IF THERE IS DELIVERY
@@ -438,6 +461,34 @@
     @else
       function mapInit(){
         console.log('!rider');
+        @if(auth()->user()->role == "Admin")
+          setTimeout(() => {
+            navigator.geolocation.getCurrentPosition(position => {
+                dlat = position.coords.latitude;
+                dlng = position.coords.longitude;
+                initMap2(dlat, dlng);
+            });
+          }, 2000);
+        @endif
+      }
+
+      function initMap2(lat, lng){
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {lat: lat, lng: lng},
+            zoom: 12,
+        });
+
+        let data = [];
+        let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
+
+        marks.forEach(a => {
+          data.push(new google.maps.LatLng(a.lat, a.lng));
+        });
+
+        var heatmap = new google.maps.visualization.HeatmapLayer({
+          data: data
+        });
+        heatmap.setMap(map);
       }
 
       function setDates(){
