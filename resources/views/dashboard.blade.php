@@ -74,6 +74,11 @@
                 </div>
 
                 <div class="pull-right" style="position: absolute; top: 5px; right: 5px;">
+
+                    <a class="btn btn-success pickedUp" data-toggle="tooltip" title="Already Picked-Up" data-id="">
+                      <span class="fa fa-hand-paper-o pickedUp" data-id=""></span>
+                    </a>
+
                    <a class="btn btn-danger cancelBooking" data-toggle="tooltip" title="Decline Booking" data-id="">
                     <span class="fa fa-times cancelBooking" data-id=""></span>
                   </a>
@@ -200,6 +205,7 @@
                 $('.delivery').addClass('hidden');
 
                 $('.cancelBooking').data('id', result.id);
+                $('.pickedUp').data('id', result.id);
 
                 if(result != null)
                 {
@@ -257,6 +263,8 @@
                       $('.box-title').html('For Delivery');
                       showDirection(rloc, dloc);
                       $('.delivery').removeClass('hidden');
+                      $('.pickedUp').addClass('hidden');
+                      $('.cancelBooking').addClass('hidden');
                     }
                   }
                 }
@@ -346,6 +354,41 @@
                 });
               }
             });
+          }
+        })
+      });
+
+      $('.pickedUp').on('click', elem => { 
+
+        swal({
+          type: 'info',
+          title: 'Confirmation',
+          showCancelButton: true,
+          cancelButtonColor: '#f76c6b',
+        }).then(result => {
+          if(result.value){
+            swal('Processing');
+            swal.showLoading();
+
+            let id = $(elem.target).data('id');
+
+            $.ajax({
+              url: "{{ route('updateStatus') }}",
+              data: {
+                id: id,
+                status: 'For Delivery',
+                pickup_time: moment().format('Y-MM-DD H:m:s')
+              },
+              success: result => {
+                swal({
+                  type: 'success',
+                  title: 'Success',
+                  text: 'Completed!',
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+              }
+            })
           }
         })
       });
