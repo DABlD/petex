@@ -65,7 +65,7 @@ class BookingController extends Controller
 				['rating', '!=', null]
 			])->pluck('rating')->toArray();
 
-			$driver->ave_ratings = count($transactions) > 0 ? array_sum($transactions) / count($transactions) : 0;
+			$driver->ave_ratings = count($transactions) > 0 ? ((array_sum($transactions) / count($transactions)) / 5) * 100 : 0;
 		}
 
 		echo json_encode($drivers);
