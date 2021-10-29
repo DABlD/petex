@@ -65,6 +65,16 @@
                                     </span>
                                 </div>
 
+                                <br>
+
+                                <div class="row">
+                                    <label for="schedule">Schedule <h6 style="color: red; display: inline-block; vertical-align:baseline;">(if not today)</h6></label>
+                                    <input type="text" class="form-control" name="schedule" id="schedule" placeholder="Select Schedule" readonly>
+                                    <span class="invalid-feedback hidden" role="alert">
+                                        <strong id="scheduleError"></strong>
+                                    </span>
+                                </div>
+
                                 <input type="hidden" name="lat" id="lat">
                                 <input type="hidden" name="lng" id="lng">
                                 <input type="hidden" name="price" id="price">
@@ -190,6 +200,13 @@
 
     <script>
         let bool;
+
+        $('[name="schedule"]').flatpickr({
+            altInput: true,
+            altFormat: 'F j, Y',
+            dateFormat: 'Y-m-d',
+            minDate: moment().add(1, 'day').format('YYYY-MM-DD')
+        });
 
         // VALIDATE ON SUBMIT
         $('.submit').click(() => {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{Transactions, Tracker};
 use App\User;
+use Image;
 
 class BookingController extends Controller
 {
@@ -109,6 +110,20 @@ class BookingController extends Controller
 
 	public function updateStatus(Request $req){
 		echo Transactions::where('id', $req->id)->update($req->except(['_token', 'id']));
+	}
+
+	public function uploadProof(Request $req){
+		$temp = Image::make($req->proof);
+		$rand = random_int(100000, 999999);
+
+		$name = $req->id . "-$rand."  . $req->proof->getClientOriginalExtension();
+
+		$destinationPath = public_path('uploads/');
+		$path = $destinationPath . $name;
+
+		$temp->save($path);
+
+		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
 	}
 
 	private function _view($view, $data = array()){

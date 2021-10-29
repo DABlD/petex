@@ -3,7 +3,10 @@
     <section class="content">
 
       {{-- Boxes --}}
+
       <div class="row">
+
+        @if(auth()->user()->role == "Admin")
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-aqua">
             <div class="inner">
@@ -16,6 +19,21 @@
             </div>
           </div>
         </div>
+        @else
+          <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-aqua">
+              <div class="inner">
+                <h3>{{ $totalTransactions }}</h3>
+
+                <p>Total Transactions</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-bag"></i>
+              </div>
+            </div>
+          </div>
+        @endif
+
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-green">
             <div class="inner">
@@ -300,16 +318,38 @@
         swal('Processing');
         swal.showLoading();
 
-        $('.delivery').addClass('hidden');
+        let id = $(elem.target).data('id');
 
-        $.ajax({
-          url: '{{ route('updateStatus') }}',
-          data: {
-            id: $(elem.target).data('id'),
-            status: 'Delivered',
-            delivery_time: moment().format('Y-MM-DD H:m:s')
-          },
-          success: result => {
+        swal({
+          title: 'Proof of delivery',
+          input: 'file',
+          showCancelButton: true,
+          cancelButtonColor: '#f76c6b',
+        }).then(result => {
+          if(result.value){
+            $('.delivery').addClass('hidden');
+            SavePhoto(result.value, id)
+          }
+        });
+      });
+
+      async function SavePhoto(photo, id) 
+      {
+          let formData = new FormData();
+               
+          formData.append("proof", photo);
+          formData.append("id", id); 
+          formData.append("_token", "{{ csrf_token() }}"); 
+          
+          const ctrl = new AbortController()    // timeout
+          setTimeout(() => ctrl.abort(), 5000);
+          
+          try {
+             let r = await fetch('{{ route('uploadProof') }}', 
+               {method: "POST", body: formData, signal: ctrl.signal}); 
+             console.log('HTTP response code:',r.status);
+
+
             setTimeout(() => {
               swal({
                 type: 'success',
@@ -319,9 +359,10 @@
                 timer: 2000
               });
             });
+          } catch(e) {
+             console.log('Huston we have problem...:', e);
           }
-        });
-      });
+      }
 
       $('.cancelBooking').on('click', elem => { 
 

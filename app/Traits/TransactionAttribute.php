@@ -42,7 +42,10 @@ trait TransactionAttribute{
 			else if($this->status == "Delivered"){
 				return 	'<a class="btn btn-primary" data-toggle="tooltip" title="Rate Driver" data-id="' . $this->id . '" data-rating="' . $this->rating . '">' .
 					        '<span class="fa fa-star" data-id="' . $this->id . '" data-rating="' . $this->rating . '"></span>' .
-					   '</a>&nbsp;';
+					   '</a>&nbsp;' .
+					   '<a class="btn btn-info" data-toggle="tooltip" title="View Proof of Delivery" data-proof="' . $this->proof . '">' .
+				   	        '<span class="fa fa-search" data-proof="' . $this->proof . '"></span>' .
+				   	    '</a>&nbsp;';
 			}
 			else{
 				return '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .

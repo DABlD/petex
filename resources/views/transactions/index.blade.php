@@ -508,6 +508,27 @@
 	    			}
 	    		})
 	    	});
+
+	    	$('[data-original-title="View Proof of Delivery"]').on('click', e => {
+	    		let proof = $(e.target).data('proof');
+
+	    		if(proof == ""){
+	    			swal({
+	    				type: 'warning',
+	    				title: "No Proof Submitted",
+	    				timer: 1500,
+	    				showConfirmButton: false
+	    			});
+	    		}
+	    		swal({
+	    			width: "100vh",
+	    			html: `
+	    				<a target="_blank" href="${proof}">
+	    					<img src="${proof}" style="width: 50vh; height: 50vh;">
+	    				</a>
+	    			`
+	    		})
+	    	});
         };
 
     	// setTimeout(() => {

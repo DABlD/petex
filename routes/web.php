@@ -98,6 +98,7 @@ Route::group([
 		Route::get('assignDriver', 'BookingController@assignDriver')->name('assignDriver');
 		Route::get('checkRiderDelivery', 'BookingController@checkRiderDelivery')->name('checkRiderDelivery');
 		Route::get('updateStatus', 'BookingController@updateStatus')->name('updateStatus');
+		Route::post('uploadProof', 'BookingController@uploadProof')->name('uploadProof');
 
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
