@@ -32,6 +32,7 @@ class DashboardController extends Controller
 	    			['sid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::where('sid', auth()->user()->id)->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
+	    		'totalTransactions' => Transactions::where('sid', auth()->user()->id)->get()->count(),
 	    		'cancelled' => Transactions::where([
 	    			['status', '=', 'cancelled'],
 	    			['sid', '=', auth()->user()->id]
@@ -48,6 +49,7 @@ class DashboardController extends Controller
 	    			['tid', '=', auth()->user()->id]
 	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::where('tid', auth()->user()->id)->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
+	    		'totalTransactions' => Transactions::where('tid', auth()->user()->id)->get()->count(),
 	    		'cancelled' => Transactions::where([
 	    			['status', '=', 'cancelled'],
 	    			['tid', '=', auth()->user()->id]
