@@ -59,10 +59,13 @@ class BookingController extends Controller
 			->get();
 
 		foreach($drivers as $key => $driver){
-			$temp = Transactions::where('tid', $driver->id)->whereIn('status', ['For Pickup','For Delivery'])->get()->count();
-			if($temp){
-				unset($drivers[$key]);
-				continue;
+			$temp = Transactions::where('tid', $driver->id)->whereIn('status', ['For Pickup','For Delivery'])->first();
+
+			if(count($temp)){
+				if($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null || now()->toDateString() >= $temp->schedule){
+					unset($drivers[$key]);
+					continue;
+				}
 			}
 
 			$transactions = Transactions::where([
@@ -110,6 +113,14 @@ class BookingController extends Controller
 			->join('users as r', 'r.id', '=', 'transactions.tid')
 			->latest('created_at')
 			->first();
+
+		if(count($temp)){
+			if(!($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null)){
+				if(now()->toDateString() < $temp->schedule){
+					$temp = "null";
+				}
+			}
+		}
 
 		echo json_encode($temp);
 	}

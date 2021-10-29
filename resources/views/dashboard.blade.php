@@ -217,80 +217,82 @@
             $.ajax({
               url: '{{ route('checkRiderDelivery') }}',
               success: result => {
-                result = JSON.parse(result);
+                if(result != "null"){
+                    result = JSON.parse(result);
 
-                $('.delivery').data('id', result.id);
-                $('.delivery').addClass('hidden');
+                    $('.delivery').data('id', result.id);
+                    $('.delivery').addClass('hidden');
 
-                $('.cancelBooking').data('id', result.id);
-                $('.pickedUp').data('id', result.id);
+                    $('.cancelBooking').data('id', result.id);
+                    $('.pickedUp').data('id', result.id);
 
-                if(result != null)
-                {
-                  $('.comments').html("N/A");
+                    if(result != null)
+                    {
+                      $('.comments').html("N/A");
 
-                  if(result.comments != ""){
-                    $('.comments').html(result.comments);
-                  }
-                  
-                  if(result.status == "Cancelled"){
-                    $('.box-title').html('Your last delivery was cancelled');
-                  }
-                  else{
-                    sloc = {
-                      lat: parseFloat(result.slat),
-                      lng: parseFloat(result.slng)
-                    };
-
-                    dloc = {
-                      lat: parseFloat(result.lat),
-                      lng: parseFloat(result.lng)
-                    }
-
-                    rloc = {
-                      lat: parseFloat(rlat),
-                      lng: parseFloat(rlng)
-                    }
-
-                    // IF PICKUP
-                    if(result.status == "For Pickup"){
-                      if(moment.duration(moment().diff(moment(result.created_at))).asSeconds() < 7)
-                      {
-                        swal({
-                          title: 'You have a new delivery!'
-                        });
+                      if(result.comments != ""){
+                        $('.comments').html(result.comments);
                       }
+                      
+                      if(result.status == "Cancelled"){
+                        $('.box-title').html('Your last delivery was cancelled');
+                      }
+                      else{
+                        sloc = {
+                          lat: parseFloat(result.slat),
+                          lng: parseFloat(result.slng)
+                        };
 
-                      $('.box-title').html('For Pickup');
-                      showDirection(rloc, sloc);
-
-                      let dMarker = new google.maps.Marker({
-                        position: dloc,
-                        map,
-                        label: {
-                          color: 'white',
-                          text: 'D'
+                        dloc = {
+                          lat: parseFloat(result.lat),
+                          lng: parseFloat(result.lng)
                         }
-                      });
 
-                      markers.push(dMarker);
+                        rloc = {
+                          lat: parseFloat(rlat),
+                          lng: parseFloat(rlng)
+                        }
+
+                        // IF PICKUP
+                        if(result.status == "For Pickup"){
+                          if(moment.duration(moment().diff(moment(result.created_at))).asSeconds() < 7)
+                          {
+                            swal({
+                              title: 'You have a new delivery!'
+                            });
+                          }
+
+                          $('.box-title').html('For Pickup');
+                          showDirection(rloc, sloc);
+
+                          let dMarker = new google.maps.Marker({
+                            position: dloc,
+                            map,
+                            label: {
+                              color: 'white',
+                              text: 'D'
+                            }
+                          });
+
+                          markers.push(dMarker);
+                        }
+
+                        // IF FOR DELIVERY
+                        else if(result.status == "For Delivery"){
+                          $('.box-title').html('For Delivery');
+                          showDirection(rloc, dloc);
+                          $('.delivery').removeClass('hidden');
+                          $('.pickedUp').addClass('hidden');
+                          $('.cancelBooking').addClass('hidden');
+                        }
+                      }
                     }
 
-                    // IF FOR DELIVERY
-                    else if(result.status == "For Delivery"){
-                      $('.box-title').html('For Delivery');
-                      showDirection(rloc, dloc);
-                      $('.delivery').removeClass('hidden');
-                      $('.pickedUp').addClass('hidden');
-                      $('.cancelBooking').addClass('hidden');
-                    }
+                    setTimeout(() => {
+                      checkDelivery();
+                    }, 5000);
                   }
                 }
-
-                setTimeout(() => {
-                  checkDelivery();
-                }, 5000);
-              }
             });
         });
       }

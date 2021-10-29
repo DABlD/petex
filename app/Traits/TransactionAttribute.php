@@ -7,8 +7,8 @@ trait TransactionAttribute{
 	public function getActionsAttribute(){
 		if(auth()->user()->role != "Admin"){
 			if($this->status == "To Process" || $this->status == "Rider Cancel"){
-				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Driver" data-id="' . $this->id . '">' .
-					        '<span class="fa fa-search" data-id="' . $this->id . '"></span>' .
+				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Driver" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '">' .
+					        '<span class="fa fa-search" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '"></span>' .
 					   '</a>&nbsp;' . 
 					   '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
 				   	        '<span class="fa fa-close" data-status="' . $this->status . '" data-id="' . $this->id . '"></span>' .

@@ -21,6 +21,7 @@
 								<th>Address</th>
 								<th>Price</th>
 								<th>Status</th>
+								<th>Schedule</th>
 								<th>Listed On</th>
 								@if(auth()->user()->role == "Seller")
 									<th>Action</th>
@@ -70,6 +71,7 @@
                 { data: 'address', name: 'address' },
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
+                { data: 'schedule', name: 'schedule' },
                 { data: 'created_at', name: 'created_at' },
                 @if(auth()->user()->role == "Seller")
                 	{ data: 'actions', name: 'actions' },
@@ -78,6 +80,18 @@
             columnDefs: [
                 {
                     targets: [5],
+                    render: function(date){
+                    	date = date == null ? "ASAP" : date;
+                        if(date != "ASAP"){
+                        	return toDate(date);
+                        }
+                        else{
+                        	return date;
+                        }
+                    }
+                },
+                {
+                    targets: [6],
                     render: function(date){
                         return toDateTime(date);
                     }
@@ -275,67 +289,108 @@
 	    					});
 	    				}
 	    				else{
-		    				var closest = {distance: 100000};
-		    				var temp;
-		    				var eta = "0";
+	    					if($(elem.target).data('schedule') == "ASAP"){
+			    				var closest = {distance: 100000};
+			    				var temp;
+			    				var eta = "0";
 
-		    				result.forEach(rider => {
-	            				distance = new google.maps.DistanceMatrixService();
+			    				result.forEach(rider => {
+		            				distance = new google.maps.DistanceMatrixService();
 
-	            				distance.getDistanceMatrix(
-	            				  {
-	            				    origins: [
-	            				    	{
-	            				    		lat: parseFloat(rider.lat),
-	            				    		lng: parseFloat(rider.lng)
-	            				    	}
-	            				    ],
-	            				    destinations: [
-	            				    	{
-	            				    		lat: parseFloat(rider.lat2),
-	            				    		lng: parseFloat(rider.lng2)
-	            				    	}
-	            				    ],
-	            				    travelMode: 'DRIVING',
-	            				  }, callback);
+		            				distance.getDistanceMatrix(
+		            				  {
+		            				    origins: [
+		            				    	{
+		            				    		lat: parseFloat(rider.lat),
+		            				    		lng: parseFloat(rider.lng)
+		            				    	}
+		            				    ],
+		            				    destinations: [
+		            				    	{
+		            				    		lat: parseFloat(rider.lat2),
+		            				    		lng: parseFloat(rider.lng2)
+		            				    	}
+		            				    ],
+		            				    travelMode: 'DRIVING',
+		            				  }, callback);
 
-	            				function callback(response, status) {
-	            					eta = response.rows[0].elements[0].duration.text;
-	            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
-	            				    if(rider.distance < closest.distance){
-	            				    	if(rider.ave_ratings >= 60){
-	            				    		closest = rider;
-	            				    	}
-	            				    	else{
-	            				    		temp = rider;
-	            				    	}
-	            				    }
-	            				}
-		    				});
+		            				function callback(response, status) {
+		            					eta = response.rows[0].elements[0].duration.text;
+		            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
+		            				    if(rider.distance < closest.distance){
+		            				    	if(rider.ave_ratings >= 60){
+		            				    		closest = rider;
+		            				    	}
+		            				    	else{
+		            				    		temp = rider;
+		            				    	}
+		            				    }
+		            				}
+			    				});
 
-		    				setTimeout(() => {
-		    					if(closest.id == undefined && temp != ""){
-		    						closest = temp;
-		    					}
+			    				setTimeout(() => {
+			    					if(closest.id == undefined && temp != ""){
+			    						closest = temp;
+			    					}
 
-		    					$.ajax({
-		    						url: "{{ route("assignDriver") }}",
-		    						data: {
-		    							tid: closest.id,
-		    							id: $(elem.target).data('id'),
-		    							eta: eta
-		    						},
-		    						success: result => {
-		    							swal({
-		    								type: 'info',
-		    								title: 'Driver Found!',
-		    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
-		    							}).then(() => {
-		    								$('#table').DataTable().ajax.reload();
-		    							});
-		    						}
-		    					});
-		    				}, 1500);
+			    					$.ajax({
+			    						url: "{{ route("assignDriver") }}",
+			    						data: {
+			    							tid: closest.id,
+			    							id: $(elem.target).data('id'),
+			    							eta: eta
+			    						},
+			    						success: result => {
+			    							swal({
+			    								type: 'info',
+			    								title: 'Driver Found!',
+			    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
+			    							}).then(() => {
+			    								$('#table').DataTable().ajax.reload();
+			    							});
+			    						}
+			    					});
+			    				}, 1500);
+	    					}
+	    					else{
+	    						var selected;
+			    				var temp;
+
+			    				result.forEach(rider => {
+			    					console.log(rider);
+            				    	if(rider.ave_ratings >= 60){
+            				    		selected = rider;
+            				    	}
+            				    	else{
+            				    		temp = rider;
+            				    	}
+			    				});
+
+			    				setTimeout(() => {
+			    					console.log(selected);
+			    					if(selected.id == undefined && temp != ""){
+			    						selected = temp;
+			    					}
+
+			    					$.ajax({
+			    						url: "{{ route("assignDriver") }}",
+			    						data: {
+			    							tid: selected.id,
+			    							id: $(elem.target).data('id'),
+			    							eta: eta
+			    						},
+			    						success: result => {
+			    							swal({
+			    								type: 'info',
+			    								title: 'Driver Found!',
+			    								text: 'Your delivery will be assigned to ' + selected.fname + " " + selected.lname,
+			    							}).then(() => {
+			    								$('#table').DataTable().ajax.reload();
+			    							});
+			    						}
+			    					});
+			    				}, 1500);
+	    					}
 	    				}
 	    				
 	    			}
