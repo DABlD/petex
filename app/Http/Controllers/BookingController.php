@@ -55,7 +55,7 @@ class BookingController extends Controller
 	public function getDriversLocation(){
 		$drivers = User::where('role', 'Rider')
 			->join('trackers', 'trackers.uid', '=', 'users.id')
-			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2'])
+			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2', 'trackers.updated_at as last_online'])
 			->get();
 
 		foreach($drivers as $key => $driver){
@@ -73,10 +73,14 @@ class BookingController extends Controller
 				['tid', '=', $driver->id],
 				['rating', '!=', null]
 			])->pluck('rating')->toArray();
+			
+			if(now()->diffInMinutes(now()->parse($driver->last_online)) > 15){
+			    unset($drivers[$key]);
+			}
 
 			$driver->ave_ratings = count($transactions) > 0 ? ((array_sum($transactions) / count($transactions)) / 5) * 100 : 0;
 		}
-
+    
 		echo json_encode($drivers);
 	}
 
