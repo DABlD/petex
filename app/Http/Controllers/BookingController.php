@@ -61,7 +61,7 @@ class BookingController extends Controller
 		foreach($drivers as $key => $driver){
 			$temp = Transactions::where('tid', $driver->id)->whereIn('status', ['For Pickup','For Delivery'])->first();
 
-			if(count($temp)){
+			if($temp != null){
 				if($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null || now()->toDateString() >= $temp->schedule){
 					unset($drivers[$key]);
 					continue;
@@ -114,7 +114,7 @@ class BookingController extends Controller
 			->latest('created_at')
 			->first();
 
-		if(count($temp)){
+		if($temp != null){
 			if(!($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null)){
 				if(now()->toDateString() < $temp->schedule){
 					$temp = "null";

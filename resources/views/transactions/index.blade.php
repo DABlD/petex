@@ -278,8 +278,13 @@
 
 	    		$.ajax({
 	    			url: "{{ route('getDriversLocation') }}",
-	    			success: result => {
-	    				result = JSON.parse(result);
+	    			success: results => {
+	    				results = JSON.parse(results);
+	    				let result = [];
+	    				
+	    			    Object.keys(results).forEach(a => {
+	    			        result.push(results[a]);
+	    			    });
 
 	    				if(result.length == 0){
 	    					swal({
@@ -357,7 +362,6 @@
 			    				var temp;
 
 			    				result.forEach(rider => {
-			    					console.log(rider);
             				    	if(rider.ave_ratings >= 60){
             				    		selected = rider;
             				    	}
@@ -367,8 +371,7 @@
 			    				});
 
 			    				setTimeout(() => {
-			    					console.log(selected);
-			    					if(selected.id == undefined && temp != ""){
+			    					if(selected == undefined && temp != ""){
 			    						selected = temp;
 			    					}
 
