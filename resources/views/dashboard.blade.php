@@ -472,24 +472,26 @@
         @endif
       }
 
-      function initMap2(lat, lng){
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: {lat: lat, lng: lng},
-            zoom: 12,
-        });
+      @if(auth()->user()->role == "Admin")
+        function initMap2(lat, lng){
+          map = new google.maps.Map(document.getElementById("map"), {
+              center: {lat: lat, lng: lng},
+              zoom: 12,
+          });
 
-        let data = [];
-        let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
+          let data = [];
+          let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
 
-        marks.forEach(a => {
-          data.push(new google.maps.LatLng(a.lat, a.lng));
-        });
+          marks.forEach(a => {
+            data.push(new google.maps.LatLng(a.lat, a.lng));
+          });
 
-        var heatmap = new google.maps.visualization.HeatmapLayer({
-          data: data
-        });
-        heatmap.setMap(map);
-      }
+          var heatmap = new google.maps.visualization.HeatmapLayer({
+            data: data
+          });
+          heatmap.setMap(map);
+        }
+      @endif
 
       function setDates(){
         $('#from, #to').flatpickr({
