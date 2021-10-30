@@ -93,12 +93,12 @@
 
                 <div class="pull-right" style="position: absolute; top: 5px; right: 5px;">
 
-                    <a class="btn btn-success pickedUp" data-toggle="tooltip" title="Already Picked-Up" data-id="">
-                      <span class="fa fa-hand-paper-o pickedUp" data-id=""></span>
+                    <a class="btn btn-success pickedUp hidden" data-toggle="tooltip" title="Already Picked-Up" data-id="">
+                      <span class="fa fa-hand-paper-o pickedUp hidden" data-id=""></span>
                     </a>
 
-                   <a class="btn btn-danger cancelBooking" data-toggle="tooltip" title="Decline Booking" data-id="">
-                    <span class="fa fa-times cancelBooking" data-id=""></span>
+                   <a class="btn btn-danger cancelBooking hidden" data-toggle="tooltip" title="Decline Booking" data-id="">
+                    <span class="fa fa-times cancelBooking hidden" data-id=""></span>
                   </a>
                 </div>
                 
@@ -252,15 +252,16 @@
                     if(result != null)
                     {
                       $('.comments').html("N/A");
-
-                      if(result.comments != ""){
-                        $('.comments').html(result.comments);
-                      }
                       
                       if(result.status == "Cancelled"){
                         $('.box-title').html('Your last delivery was cancelled');
                       }
                       else{
+                          
+                          if(result.comments != ""){
+                            $('.comments').html(result.comments);
+                          }
+                          
                         sloc = {
                           lat: parseFloat(result.slat),
                           lng: parseFloat(result.slng)
@@ -278,6 +279,8 @@
 
                         // IF PICKUP
                         if(result.status == "For Pickup"){
+                            $('.pickedUp').removeClass('hidden');
+                          $('.cancelBooking').removeClass('hidden');
                           if(moment.duration(moment().diff(moment(result.created_at))).asSeconds() < 7)
                           {
                             swal({
@@ -305,6 +308,11 @@
                           $('.box-title').html('For Delivery');
                           showDirection(rloc, dloc);
                           $('.delivery').removeClass('hidden');
+                          $('.pickedUp').addClass('hidden');
+                          $('.cancelBooking').addClass('hidden');
+                        }
+                        else if(result.status == "Rider Cancel"){
+                            $('.comments').html('');
                           $('.pickedUp').addClass('hidden');
                           $('.cancelBooking').addClass('hidden');
                         }
@@ -471,26 +479,28 @@
           }, 2000);
         @endif
       }
-
+      
       @if(auth()->user()->role == "Admin")
-        function initMap2(lat, lng){
-          map = new google.maps.Map(document.getElementById("map"), {
-              center: {lat: lat, lng: lng},
-              zoom: 12,
-          });
 
-          let data = [];
-          let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
+      function initMap2(lat, lng){
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {lat: lat, lng: lng},
+            zoom: 12,
+        });
 
-          marks.forEach(a => {
-            data.push(new google.maps.LatLng(a.lat, a.lng));
-          });
+        let data = [];
+        let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
 
-          var heatmap = new google.maps.visualization.HeatmapLayer({
-            data: data
-          });
-          heatmap.setMap(map);
-        }
+        marks.forEach(a => {
+          data.push(new google.maps.LatLng(a.lat, a.lng));
+        });
+
+        var heatmap = new google.maps.visualization.HeatmapLayer({
+          data: data
+        });
+        heatmap.setMap(map);
+      }
+      
       @endif
 
       function setDates(){
