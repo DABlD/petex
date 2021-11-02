@@ -95,7 +95,7 @@ class BookingController extends Controller
 		echo Transactions::where('id', $req->id)->update([
 			'tid' => $req->tid, 
 			'assigned_time' => now(), 
-			'status' => "For Pickup",
+			'status' => "Finding Driver",
 			'eta' => $req->eta
 		]);
 	}

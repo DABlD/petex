@@ -218,13 +218,6 @@
         checkDelivery(map.center);
       }
 
-      function initMap2(lat, lng){
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: {lat: lat, lng: lng},
-            zoom: 12,
-        });
-      }
-
       // CHECK IF THERE IS DELIVERY
       function checkDelivery(){
 
@@ -252,9 +245,75 @@
                     if(result != null)
                     {
                       $('.comments').html("N/A");
+                      console.log(result.status);
                       
-                      if(result.status == "Cancelled"){
+                      if(result.status == "Finding Driver"){
+                          swal({
+                              title: 'Would you like to accept this booking?',
+                              html: `
+                                <h4>
+                                Name: ${result.fname} ${result.lname}<br>
+                                Price: ₱${result.price.toFixed(2)}<br>
+                                Address: ${result.address}
+                                </h4>
+                              `,
+                              showCancelButton: true,
+                              cancelButtonText: 'Decline',
+                              confirmButtonText: 'Accept',
+                              cancelButtonColor: '#f76c6b',
+                              onOpen: () => {
+                                  $('#swal2-content').css({
+                                      "text-align": "left",
+                                      "padding-left": '30px'
+                                  })
+                              }
+                          }).then(choice => {
+                              if(choice.dismiss == "cancel"){
+                                $.ajax({
+                                  url: '{{ route('updateStatus') }}',
+                                  data: {
+                                    id: result.id,
+                                    status: 'To Process',
+                                    tid: null
+                                  },
+                                  success: result => {
+                                    setTimeout(() => {
+                                      swal({
+                                        type: 'success',
+                                        title: 'Success',
+                                        text: 'Completed!',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                      });
+                                    });
+                                  }
+                                });
+                              }
+                              else if(choice.value){
+                                $.ajax({
+                                  url: '{{ route('updateStatus') }}',
+                                  data: {
+                                    id: result.id,
+                                    status: 'For Pickup',
+                                  },
+                                  success: result => {
+                                    setTimeout(() => {
+                                      swal({
+                                        type: 'success',
+                                        title: 'Success',
+                                        text: 'Completed!',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                      });
+                                    });
+                                  }
+                                });
+                              }
+                          });
+                      }
+                      else if(result.status == "Cancelled"){
                         $('.box-title').html('Your last delivery was cancelled');
+                            $('.comments').html('');
                       }
                       else{
                           
@@ -316,12 +375,16 @@
                           $('.pickedUp').addClass('hidden');
                           $('.cancelBooking').addClass('hidden');
                         }
+                        else if (result.status == "Delivered"){
+                            
+                            $('.comments').html('');
+                        }
                       }
                     }
 
                     setTimeout(() => {
                       checkDelivery();
-                    }, 5000);
+                    }, 7000);
                   }
                 }
             });
