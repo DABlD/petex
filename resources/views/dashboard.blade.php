@@ -39,7 +39,11 @@
             <div class="inner">
               <h3>{{ $ongoing }}</h3>
 
-              <p>Ongoing Delivery</p>
+              @if(auth()->user()->role != "Rider")
+                <p>Ongoing Delivery</p>
+              @else
+                <p>Income Today</p>
+              @endif
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
@@ -103,6 +107,10 @@
                 </div>
                 
 
+              </div>
+
+              <div class="col-md-12">
+                <canvas id="chart-1"></canvas>
               </div>
 
               <div class="box-body">
@@ -612,6 +620,7 @@
         let to = $('#to').val();
 
         from = to != "" ? from != "" ? from : to : from;
+        to = "" ? moment().format("YYYY-MM-DD") : to;
 
         $.ajax({
           url: '{{ route('getData') }}',
