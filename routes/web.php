@@ -100,6 +100,17 @@ Route::group([
 		Route::get('updateStatus', 'BookingController@updateStatus')->name('updateStatus');
 		Route::post('uploadProof', 'BookingController@uploadProof')->name('uploadProof');
 
+		// RIDER
+		Route::get('income', 'TransactionsController@income')
+			->defaults('sidebar', 1)
+			->defaults('icon', 'fa-money')
+			->defaults('name', 'Income Report')
+			->defaults('roles', array('Rider'))
+			->name('transactions.income')
+			->defaults('href', 'income');
+
+		Route::get('getIncome', 'TransactionsController@getIncome')->name('getIncome');
+
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');

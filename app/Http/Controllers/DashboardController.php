@@ -44,13 +44,12 @@ class DashboardController extends Controller
 	    	return $this->_view('dashboard', [
 	    		'title' => 'Dashboard',
 	    		'users' => User::all()->count(),
-	    		'ongoing' => Transactions::where([
-	    			['status', '!=', 'Cancelled'],
-	    			['status', '!=', 'Delivered'],
-	    			['tid', '=', auth()->user()->id]
-	    		])->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'deliveries' => Transactions::where('tid', auth()->user()->id)->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'totalTransactions' => Transactions::where('tid', auth()->user()->id)->get()->count(),
+	    		'ongoing' => '₱' . number_format(Transactions::where([
+	    			['status', '=', 'Delivered'],
+	    			['tid', '=', auth()->user()->id]
+	    		])->whereRaw('Date(created_at) = CURDATE()')->sum('price'), 2, '.', ","),
 	    		'cancelled' => Transactions::where([
 	    			['status', '=', 'Cancelled'],
 	    			['tid', '=', auth()->user()->id]
