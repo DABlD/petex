@@ -29,7 +29,7 @@ trait TransactionAttribute{
 				// return 	'<a class="btn btn-success" data-toggle="tooltip" title="Already Picked-Up" data-id="' . $this->id . '">' .
 				// 	        '<span class="fa fa-hand-paper-o" data-id="' . $this->id . '"></span>' .
 				// 	   '</a>&nbsp;' . 
-				return  '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
+			    return  '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
 				   	        '<span class="fa fa-close" data-status="' . $this->status . '" data-id="' . $this->id . '"></span>' .
 				   	    '</a>&nbsp;' . 
 					   '<a class="btn btn-warning" data-toggle="tooltip" title="View Files" data-files=`' . $this->files . '`>' .
