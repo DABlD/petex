@@ -19,6 +19,8 @@
 								<th>Name</th>
 								<th>Contact</th>
 								<th>Address</th>
+								<th>Rider</th>
+								<th>Rider #</th>
 								<th>Price</th>
 								<th>Status</th>
 								<th>Schedule</th>
@@ -69,6 +71,8 @@
                 { data: 'fname', name: 'fname' },
                 { data: 'contact', name: 'contact' },
                 { data: 'address', name: 'address' },
+                { data: 'rfname', name: 'rfname' },
+                { data: 'rcontact', name: 'rcontact' },
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
                 { data: 'schedule', name: 'schedule' },
@@ -79,7 +83,7 @@
             ],
             columnDefs: [
                 {
-                    targets: [5],
+                    targets: [7],
                     render: function(date){
                     	date = date == null ? "ASAP" : date;
                         if(date != "ASAP"){
@@ -91,7 +95,7 @@
                     }
                 },
                 {
-                    targets: [6],
+                    targets: [8],
                     render: function(date){
                         return toDateTime(date);
                     }
@@ -104,6 +108,12 @@
                 },
                 {
                 	targets: [3],
+                    render: function(a,b,row){
+                        return row.rfname + " " + row.rlname;
+                    }
+                },
+                {
+                	targets: [5],
                     render: function(price){
                         return parseFloat(price).toFixed(2);
                     }

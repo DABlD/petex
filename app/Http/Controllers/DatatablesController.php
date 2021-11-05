@@ -29,7 +29,10 @@ class DatatablesController extends Controller
 			}
 		}
 		else if(auth()->user()->role == "Seller"){
-			$transactions = Transactions::where('sid', auth()->user()->id)->get();
+			$transactions = Transactions::where('sid', auth()->user()->id)
+								->select('transactions.*', 'r.fname as rfname', 'r.lname as rlname', 'r.contact as rcontact')
+								->join('users as r', 'r.id', '=', 'transactions.tid')
+								->get();
 			foreach($transactions as $transaction){
 				$transaction->actions = $transaction->actions;
 			}
