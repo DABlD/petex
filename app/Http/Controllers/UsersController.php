@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Image;
 
 class UsersController extends Controller
 {
@@ -30,15 +31,32 @@ class UsersController extends Controller
         ]);
     }
 
-    public function store(Request $req){
-        $data = $req->except(['confirm_password', '_token']);
+    public function store(Request $request){
 
-        if(User::create($data)){
-            $req->session()->flash('success', 'User Successfully Added.');
+        $images = $request->file('files');
+        $files = [];
+
+        foreach($images as $image){
+            $temp = Image::make($image);
+            $rand = random_int(100000, 999999);
+
+            $name = $request->fname . '_' . $request->lname . "-$rand."  . $image->getClientOriginalExtension();
+
+            $destinationPath = public_path('uploads/');
+            $path = $destinationPath . $name;
+
+            array_push($files, "uploads/" . $name);
+            $temp->save($path);
+        }
+
+        $data = $request->except(['confirm_password', '_token', 'files']);
+
+        if(User::create(array_merge($data, ["files" => json_encode($files)]))){
+            $request->session()->flash('success', 'User Successfully Added.');
             return redirect()->route('users.index');
         }
         else{
-            $req->session()->flash('error', 'There was a problem adding the user. Try again.');
+            $request->session()->flash('error', 'There was a problem adding the user. Try again.');
             return back();
         }
     }
