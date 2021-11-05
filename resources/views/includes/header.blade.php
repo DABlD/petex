@@ -32,7 +32,7 @@
               </li>
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a href="#" id="profile" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
                   <a class="btn btn-default btn-flat" href="{{ route('logout') }}"
@@ -53,3 +53,87 @@
       </div>
     </nav>
   </header>
+
+  @push('after-scripts')
+    <script>
+      $('#profile').on('click', () => {
+        $.ajax({
+          url: '{{ route('users.get', ['user' => auth()->user()->id]) }}',
+          success: result => {
+            let user = JSON.parse(result);
+
+            let fields = "";
+
+            let names = [
+              'First Name', 'Middle Name', 'Last Name', 
+              'Birthday', 'Gender', 'Role',
+              'Contact', 'Created At'
+            ];
+
+            let columns = [
+              'fname', 'mname', 'lname',
+              'birthday', 'gender', 'role',
+              'contact', 'created_at'
+            ];
+
+            $.each(Object.keys(user), (index, key) => {
+              let temp = columns.indexOf(key);
+              if(temp >= 0){
+                fields += `
+                <div class="row">
+                  <div class="col-md-3">
+                    <h5><strong>` + names[temp] + `</strong></h5>
+                  </div>
+                  <div class="col-md-9">
+                    <input type="text" class="form-control" value="` + user[key]+ `" readonly/>
+                  </div>
+                </div>
+                <br id="` + key + `">
+              `;
+              }
+            });
+
+            swal({
+              title: 'User Details',
+              width: '50%',
+              html: `
+                <br><br>
+              <div class="row">
+                <div class="col-md-3">
+                  <img src="` + user.avatar + `" alt="User Avatar" height="120px"/>
+                </div>
+                <div class="col-md-9">
+                  ` + fields + `
+                </div>
+              </div>
+              `,
+              onBeforeOpen: () => {
+                // CUSTOM FIELDS
+                $(` <div class="row">
+                  <div class="col-md-3">
+                    <h5><strong>Address</strong></h5>
+                  </div>
+                  <div class="col-md-9">
+                    <textarea type="text" class="form-control" readonly>`+ user.address +`</textarea>
+                  </div>
+                </div>
+                <br id="address">`).insertAfter($('#role'));
+
+                $('h5').css('text-align', 'left');
+
+                // OPTIONAL
+                $('textarea').css('resize', 'none');
+
+                // MODIFIERS
+                let birthday = $($('#birthday')[0].previousElementSibling).find('.form-control');
+                birthday.val(moment(birthday.val()).format('MMM. DD, YYYY'));
+
+                let created_at = $($('#created_at')[0].previousElementSibling).find('.form-control');
+                created_at.val(moment(created_at.val()).format('MMM. DD, YYYY h:mm A'));
+              }
+            });
+          }
+        })
+      });
+    </script>
+  @endpush

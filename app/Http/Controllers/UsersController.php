@@ -9,7 +9,7 @@ use Image;
 class UsersController extends Controller
 {
     public function __construct(){
-        $this->middleware('permissions:' . 'Admin');
+        $this->middleware('permissions:' . 'Seller/Admin/Rider');
     }
 
     public function index(){
