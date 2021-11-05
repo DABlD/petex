@@ -6,7 +6,7 @@ trait TransactionAttribute{
 
 	public function getActionsAttribute(){
 		if(auth()->user()->role != "Admin"){
-			if($this->status == "To Process" || $this->status == "Rider Cancel"){
+			if($this->status == "To Process"){
 				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Driver" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '">' .
 					        '<span class="fa fa-search" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '"></span>' .
 					   '</a>&nbsp;' . 
@@ -46,6 +46,11 @@ trait TransactionAttribute{
 					   '<a class="btn btn-info" data-toggle="tooltip" title="View Proof of Delivery" data-proof="' . $this->proof . '">' .
 				   	        '<span class="fa fa-search" data-proof="' . $this->proof . '"></span>' .
 				   	    '</a>&nbsp;';
+			}
+			else if($this->status == "Rider Cancel" || $this->status == "Cancelled"){
+				return '<a class="btn btn-danger" style="pointer-events: none;">' .
+				   	        $this->status . 
+				   	    '</a>';
 			}
 			else{
 				return '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .

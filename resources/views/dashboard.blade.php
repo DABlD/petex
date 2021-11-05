@@ -84,10 +84,9 @@
 
               <div class="box-header with-border">
                 <h3 class="box-title" style="color: red;">No Delivery</h3>
-                <h4 style="color: blue;">Comments: <span style="color: black;" class="comments"></span></h4>
-
-
-
+                <h4 style="color: black;">Comments: <span style="color: black;" class="comments"></span></h4>
+                <h4 style="color: black;" class="hidden">Name of Seller: <span style="color: black;" class="sname"></span></h4>
+                <h4 style="color: black;" class="hidden">Contact of Seller: <span style="color: black;" class="scontact"></span></h4>
 
                 <div class="pull-right" style="position: absolute; top: 5px; right: 5px;">
                    <a class="btn btn-success hidden delivery" data-toggle="tooltip" title="Complete Delivery" data-id="">
@@ -244,6 +243,9 @@
                 if(result != "null"){
                     result = JSON.parse(result);
 
+                    $('.sname').parent().addClass('hidden');
+                    $('.scontact').parent().addClass('hidden');
+
                     $('.delivery').data('id', result.id);
                     $('.delivery').addClass('hidden');
 
@@ -323,8 +325,13 @@
                         $('.box-title').html('Your last delivery was cancelled');
                             $('.comments').html('');
                       }
-                      else{
-                          
+                      else if(result.status != "Rider Cancel"){
+
+                          $('.sname').html(result.sfname + " " + result.slname);
+                          $('.scontact').html(result.scontact);
+                          $('.sname').parent().removeClass('hidden');
+                          $('.scontact').parent().removeClass('hidden');
+
                           if(result.comments != ""){
                             $('.comments').html(result.comments);
                           }

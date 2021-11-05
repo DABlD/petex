@@ -414,7 +414,7 @@
                     let distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
                     let duration = response.rows[0].elements[0].duration.valu / 60;
 
-                    let temp = distance <= 2 ? distance * 0 : (Math.ceil(distance - 2) * 6).toFixed(2);
+                    let temp = distance <= 2 ? distance * 0 : (Math.ceil(distance - 2) * 40).toFixed(2);
                     
                     $('#overM').text(temp);
                     $('#distance').text(distance);
