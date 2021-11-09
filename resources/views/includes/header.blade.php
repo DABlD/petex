@@ -130,6 +130,13 @@
 
                 let created_at = $($('#created_at')[0].previousElementSibling).find('.form-control');
                 created_at.val(moment(created_at.val()).format('MMM. DD, YYYY h:mm A'));
+              },
+              showCancelButton: true,
+              cancelButtonColor: 'green',
+              cancelButtonText: 'Edit Profile'
+            }).then(result => {
+              if(result.dismiss == "cancel"){
+                window.location.href = "users/edit/{{ auth()->user()->id }}";
               }
             });
           }
