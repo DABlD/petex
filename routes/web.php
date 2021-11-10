@@ -61,7 +61,7 @@ Route::group([
 			->defaults('sidebar', 1)
 			->defaults('icon', 'fa-users')
 			->defaults('name', 'Users Management')
-			->defaults('roles', array('Admin', 'Seller', 'Rider'))
+			->defaults('roles', array('Admin'))
 			->name('users.index')
 			->defaults('href', 'users');
 

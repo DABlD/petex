@@ -30,12 +30,26 @@ class DatatablesController extends Controller
 		}
 		else if(auth()->user()->role == "Seller"){
 			$transactions = Transactions::where('sid', auth()->user()->id)
-								->select('transactions.*', 'r.fname as rfname', 'r.lname as rlname', 'r.contact as rcontact')
-								->join('users as r', 'r.id', '=', 'transactions.tid')
+								->select('transactions.*')
 								->get();
+
+			$array = [];
+
 			foreach($transactions as $transaction){
+				$temp = User::where('id', $transaction->tid)->select('fname as rfname', 'lname as rlname', 'contact as rcontact')->first();
 				$transaction->actions = $transaction->actions;
+
+
+				$transaction = array_merge($transaction->toArray(), $temp != null ? $temp->toArray() : [
+				    "rfname" => null,
+				    "rlname" => null,
+				    "rcontact" => null
+				]);
+
+				array_push($array, $transaction);
 			}
+
+			$transactions = $array;
 		}
 		else{
 			$transactions = Transactions::where('tid', auth()->user()->id)->get();

@@ -109,7 +109,13 @@
                 {
                 	targets: [3],
                     render: function(a,b,row){
-                        return row.rfname + " " + row.rlname;
+                        return row.rfname != null ? row.rfname + " " + row.rlname : "-----";
+                    }
+                },
+                {
+                	targets: [4],
+                    render: function(a,b,row){
+                        return row.rcontact ?? "-----";
                     }
                 },
                 {

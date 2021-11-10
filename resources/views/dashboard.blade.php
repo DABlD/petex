@@ -227,7 +227,6 @@
 
       // CHECK IF THERE IS DELIVERY
       function checkDelivery(){
-
         navigator.geolocation.getCurrentPosition(position => {
             rlat = position.coords.latitude;
             rlng = position.coords.longitude;
@@ -256,6 +255,21 @@
                     {
                       $('.comments').html("N/A");
                       console.log(result.status);
+ 
+                      sloc = {
+                        lat: parseFloat(result.slat),
+                        lng: parseFloat(result.slng)
+                      };
+
+                      dloc = {
+                        lat: parseFloat(result.lat),
+                        lng: parseFloat(result.lng)
+                      }
+
+                      rloc = {
+                        lat: parseFloat(rlat),
+                        lng: parseFloat(rlng)
+                      }
                       
                       if(result.status == "Finding Driver"){
                           swal({
@@ -265,17 +279,57 @@
                                 Name: ${result.fname} ${result.lname}<br>
                                 Price: ₱${result.price.toFixed(2)}<br>
                                 Address: ${result.address}
+
+                                <div id="map2" style="width: 100%; height: 50vh;"></div>
                                 </h4>
                               `,
                               showCancelButton: true,
                               cancelButtonText: 'Decline',
                               confirmButtonText: 'Accept',
                               cancelButtonColor: '#f76c6b',
+                              width: '80vh',
+                              allowOutsideClick: false,
                               onOpen: () => {
                                   $('#swal2-content').css({
                                       "text-align": "left",
                                       "padding-left": '30px'
                                   })
+
+                                  map = new google.maps.Map(document.getElementById("map2"), {
+                                      center: rloc,
+                                      zoom: 12,
+                                  });
+
+                                  
+                                  let dMarker = new google.maps.Marker({
+                                    position: dloc,
+                                    map,
+                                    label: {
+                                      color: 'white',
+                                      text: 'C'
+                                    },
+                                  });
+
+                                  directionsService2 = new google.maps.DirectionsService();
+                                  directionsRenderer2 = new google.maps.DirectionsRenderer();
+
+                                  directionsRenderer2.setMap(map);
+
+                                  let request2 = {
+                                      origin: rloc,
+                                      destination: sloc,
+                                      travelMode: 'DRIVING'
+                                  };
+                                  directionsService2.route(request2, function(result, status) {
+                                    if (status == 'OK') {
+                                      directionsRenderer2.setOptions({
+                                          polylineOptions: {
+                                            strokeColor: 'red'
+                                          }
+                                      }); 
+                                      directionsRenderer2.setDirections(result);
+                                    }
+                                  });
                               }
                           }).then(choice => {
                               if(choice.dismiss == "cancel"){
@@ -319,6 +373,8 @@
                                   }
                                 });
                               }
+
+                              checkDelivery();
                           });
                       }
                       else if(result.status == "Cancelled"){
@@ -326,29 +382,13 @@
                             $('.comments').html('');
                       }
                       else if(result.status != "Rider Cancel"){
+                        $('.sname').html(result.sfname + " " + result.slname);
+                        $('.scontact').html(result.scontact);
+                        $('.sname').parent().removeClass('hidden');
+                        $('.scontact').parent().removeClass('hidden');
 
-                          $('.sname').html(result.sfname + " " + result.slname);
-                          $('.scontact').html(result.scontact);
-                          $('.sname').parent().removeClass('hidden');
-                          $('.scontact').parent().removeClass('hidden');
-
-                          if(result.comments != ""){
-                            $('.comments').html(result.comments);
-                          }
-                          
-                        sloc = {
-                          lat: parseFloat(result.slat),
-                          lng: parseFloat(result.slng)
-                        };
-
-                        dloc = {
-                          lat: parseFloat(result.lat),
-                          lng: parseFloat(result.lng)
-                        }
-
-                        rloc = {
-                          lat: parseFloat(rlat),
-                          lng: parseFloat(rlng)
+                        if(result.comments != ""){
+                          $('.comments').html(result.comments);
                         }
 
                         // IF PICKUP
@@ -365,16 +405,16 @@
                           $('.box-title').html('For Pickup');
                           showDirection(rloc, sloc);
 
-                          let dMarker = new google.maps.Marker({
-                            position: dloc,
-                            map,
-                            label: {
-                              color: 'white',
-                              text: 'D'
-                            }
-                          });
+                          // let dMarker = new google.maps.Marker({
+                          //   position: dloc,
+                          //   map,
+                          //   label: {
+                          //     color: 'white',
+                          //     text: 'D'
+                          //   }
+                          // });
 
-                          markers.push(dMarker);
+                          // markers.push(dMarker);
                         }
 
                         // IF FOR DELIVERY
@@ -392,13 +432,17 @@
                         }
                         else if (result.status == "Delivered"){
                             
+                            $('.sname').parent().addClass('hidden');
+                            $('.scontact').parent().addClass('hidden');
                             $('.comments').html('');
                         }
                       }
                     }
 
                     setTimeout(() => {
-                      checkDelivery();
+                      if(!$('#swal2-content').is(":visible")){
+                        checkDelivery();
+                      }
                     }, 7000);
                   }
                 }
