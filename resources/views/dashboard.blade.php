@@ -278,7 +278,11 @@
                                 <h4>
                                 Name: ${result.fname} ${result.lname}<br>
                                 Price: ₱${result.price.toFixed(2)}<br>
-                                Address: ${result.address}
+                                Address: ${result.address}<br>
+                                ETA: <span id="eta"></span>
+
+                                <br>
+                                <br>
 
                                 <div id="map2" style="width: 100%; height: 50vh;"></div>
                                 </h4>
@@ -300,7 +304,6 @@
                                       zoom: 12,
                                   });
 
-                                  
                                   let dMarker = new google.maps.Marker({
                                     position: dloc,
                                     map,
@@ -330,6 +333,30 @@
                                       directionsRenderer2.setDirections(result);
                                     }
                                   });
+
+                                  // DISTANCE
+                                  distance.getDistanceMatrix({
+                                    origins: [sloc],
+                                    destinations: [dloc],
+                                    travelMode: 'DRIVING',
+                                  }, callback);
+
+                                  function callback(response, status) {
+                                    eta = response.rows[0].elements[0].duration.value;
+
+                                    // DISTANCE
+                                    distance.getDistanceMatrix({
+                                      origins: [rloc],
+                                      destinations: [sloc],
+                                      travelMode: 'DRIVING',
+                                    }, callback2);
+
+                                    function callback2(response, status) {
+                                      eta2 = response.rows[0].elements[0].duration.value;
+                                      console.log(Math.ceil((eta + eta2) / 60) + " min");
+                                      $('#eta').html(Math.ceil((eta + eta2) / 60) + " min");
+                                    }
+                                  }
                               }
                           }).then(choice => {
                               if(choice.dismiss == "cancel"){

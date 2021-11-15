@@ -23,6 +23,7 @@
 								<th>Rider #</th>
 								<th>Price</th>
 								<th>Status</th>
+								<th>ETA</th>
 								<th>Schedule</th>
 								<th>Listed On</th>
 								@if(auth()->user()->role == "Seller")
@@ -75,6 +76,7 @@
                 { data: 'rcontact', name: 'rcontact' },
                 { data: 'price', name: 'price' },
                 { data: 'status', name: 'status' },
+                { data: 'eta', name: 'eta' },
                 { data: 'schedule', name: 'schedule' },
                 { data: 'created_at', name: 'created_at' },
                 @if(auth()->user()->role == "Seller")
@@ -83,7 +85,7 @@
             ],
             columnDefs: [
                 {
-                    targets: [7],
+                    targets: [8],
                     render: function(date){
                     	date = date == null ? "ASAP" : date;
                         if(date != "ASAP"){
@@ -95,9 +97,15 @@
                     }
                 },
                 {
-                    targets: [8],
+                    targets: [9],
                     render: function(date){
                         return toDateTime(date);
+                    }
+                },
+                {
+                    targets: [7],
+                    render: function(eta){
+                        return eta == null ? "---" : eta;
                     }
                 },
                 {
