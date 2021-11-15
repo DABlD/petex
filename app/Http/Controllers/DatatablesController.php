@@ -35,6 +35,8 @@ class DatatablesController extends Controller
 				    "rlname" => null,
 				    "rcontact" => null
 				]);
+
+				array_push($array, $transaction);
 			}
 			$transactions = $array;
 		}
@@ -64,6 +66,7 @@ class DatatablesController extends Controller
 		else{
 			$transactions = Transactions::where('tid', auth()->user()->id)->get();
 			$array = [];
+
 			foreach($transactions as $transaction){
 				$transaction->actions = $transaction->actions;
 
@@ -73,6 +76,8 @@ class DatatablesController extends Controller
 				    "rlname" => null,
 				    "rcontact" => null
 				]);
+
+				array_push($array, $transaction);
 			}
 			$transactions = $array;
 		}
