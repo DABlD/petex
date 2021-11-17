@@ -478,21 +478,46 @@
 	    						},
 	    						success: result => {
 	    							result = JSON.parse(result);
-	    							let loc = {lat: parseFloat(result.rlat), lng: parseFloat(result.rlng)};
+	    							let rloc = {lat: parseFloat(result.rlat), lng: parseFloat(result.rlng)};
 
 	    							map = new google.maps.Map(document.getElementById("map"), {
-	    							    center: loc,
+	    							    center: rloc,
 	    							    zoom: 12,
 	    							});
 
-	    							let dMarker = new google.maps.Marker({
-	    							  position: loc,
-	    							  map,
-	    							  label: {
-	    							    color: 'white',
-	    							    text: 'R'
-	    							  }
-	    							});
+							        directionsService = new google.maps.DirectionsService();
+							        directionsRenderer = new google.maps.DirectionsRenderer();
+
+									directionsService2 = new google.maps.DirectionsService();
+									directionsRenderer2 = new google.maps.DirectionsRenderer();
+
+									directionsRenderer2.setMap(map);
+
+									let request2 = {
+										origin: rloc,
+										destination: {lat: slat, lng:slng},
+										travelMode: 'DRIVING'
+									};
+
+									directionsService2.route(request2, function(result, status) {
+										if (status == 'OK') {
+											directionsRenderer2.setOptions({
+											    polylineOptions: {
+											      	strokeColor: 'red'
+											    }
+											}); 
+											directionsRenderer2.setDirections(result);
+										}
+									});
+
+	    							// let dMarker = new google.maps.Marker({
+	    							//   position: loc,
+	    							//   map,
+	    							//   label: {
+	    							//     color: 'white',
+	    							//     text: 'R'
+	    							//   }
+	    							// });
 
                       				markers.push(dMarker);
 	    						}
