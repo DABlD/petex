@@ -87,7 +87,7 @@ class BookingController extends Controller
 	public function getDriverLocation(Request $req){
 		echo json_encode(User::where('users.id', $req->id)
 			->join('trackers', 'trackers.uid', '=', 'users.id')
-			->select(['users.*', 'trackers.lat as rlat', 'trackers.lng as rlng'])
+			->select($req->fields ? json_decode($req->fields) : ['users.*', 'trackers.lat as rlat', 'trackers.lng as rlng'])
 			->first());
 	}
 
@@ -145,6 +145,10 @@ class BookingController extends Controller
 		$temp->save($path);
 
 		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
+	}
+
+	public function getAll(Request $req){
+		echo json_encode(Transactions::where($req->cond ? json_decode($req->cond) : ['id', '>', 0])->select($req->fields ? json_decode($req->fields) : "*")->get());
 	}
 
 	private function _view($view, $data = array()){

@@ -89,6 +89,7 @@ Route::group([
 		Route::get('transactions/book-now', 'BookingController@index')->name('book-now');
 		Route::get('getUserAddress', 'BookingController@getUserAddress')->name('getUserAddress');
 		Route::get('cancel/{id}', 'BookingController@cancel')->name('cancel');
+		Route::get('getAll', 'BookingController@getAll')->name('getAll');
 
 		Route::post('create', 'BookingController@create')->name('transactions.store');
 

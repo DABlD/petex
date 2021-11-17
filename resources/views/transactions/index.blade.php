@@ -648,5 +648,74 @@
 	    		renewTable();
 	    	}, 10000);
     	}
+
+    	renewETA();
+    	function renewETA(){
+    		$.ajax({
+    			url: '{{ route('getAll') }}',
+    			data: {
+    				cond: JSON.stringify([
+    					["status", 'LIKE', "For %"],
+    				]),
+    				fields: JSON.stringify(["id", "sid", "tid"])
+    			},
+    			success: transactions => {
+    				transactions = JSON.parse(transactions);
+
+    				transactions.forEach(transaction => {
+	    				rider = [];
+	    				seller = [];
+
+	    				$.ajax({
+	    					url: '{{ route("getDriverLocation") }}',
+	    					data: {
+	    						id: transaction.tid,
+	    						fields: JSON.stringify(["trackers.lat", 'trackers.lng'])
+	    					},
+	    					success: result => {
+	    						rider = JSON.parse(result);
+
+	    						// rider.lat = rider.lat.toString();
+	    						// rider.lng = rider.lng.toString();
+	    					}
+	    				});
+
+	    				$.ajax({
+	    					url: '{{ route("getUserAddress") }}',
+	    					data: {id: transaction.sid},
+	    					success: result => {
+	    						seller = JSON.parse(result);
+
+	    						seller.lat = parseFloat(seller.lat);
+	    						seller.lng = parseFloat(seller.lng);
+	    					}
+	    				}).done(() => {
+	    					// DISTANCE
+        					let distance = new google.maps.DistanceMatrixService();
+        					
+	    					distance.getDistanceMatrix({
+	    						origins: [rider],
+	    						destinations: [seller],
+	    						travelMode: 'DRIVING',
+	    					}, callback);
+
+	    					function callback(response, status) {
+	    						$.ajax({
+	    							url: '{{ route("updateStatus") }}',
+	    							data: {
+	    								id: transaction.id,
+	    								eta: response.rows[0].elements[0].duration.text
+	    							}
+	    						}).done(() => {
+	    							setTimeout(() => {
+	    								renewETA();
+	    							}, 5000);
+	    						})
+	    					}
+	    				});
+    				});
+    			}
+    		})
+    	}
 	</script>
 @endpush
