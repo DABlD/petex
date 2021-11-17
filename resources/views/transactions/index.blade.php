@@ -717,5 +717,33 @@
     			}
     		})
     	}
+
+    	checkBookings();
+    	function checkBookings(){
+    		$.ajax({
+    			url: '{{ route('getAll') }}',
+    			data: {
+    				cond: JSON.stringify([
+    					["status", '=', "Finding Driver"],
+    				]),
+    				fields: JSON.stringify(["id", "created_at"])
+    			},
+    			success: transactions => {
+    				transactions = JSON.parse(transactions);
+
+    				transactions.forEach(transaction => {
+    					if(moment.duration(moment().diff(moment(transaction.created_at))).asMinutes() >= 1){
+    						$.ajax({
+    							url: '{{ route("updateStatus") }}',
+    							data: {
+    								id: transaction.id,
+    								status: "Cancelled"
+    							}
+    						})
+    					}
+    				});
+    			}
+    		})
+    	}
 	</script>
 @endpush

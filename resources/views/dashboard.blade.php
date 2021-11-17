@@ -108,9 +108,10 @@
 
               </div>
 
+              {{-- 
               <div class="col-md-12">
                 <canvas id="chart-1"></canvas>
-              </div>
+              </div> --}}
 
               <div class="box-body">
                   <div id="map" style="width: 100%; height: 50vh; position: block;"></div>
