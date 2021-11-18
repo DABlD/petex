@@ -296,8 +296,8 @@
 	    		}
 	    	});
 
-	    	$('[data-original-title="Find Driver"]').on('click', elem => {
-	    		swal('Finding Driver');
+	    	$('[data-original-title="Find Rider"]').on('click', elem => {
+	    		swal('Finding Rider');
 	    		swal.showLoading();
 
 	    		$.ajax({
@@ -313,7 +313,7 @@
 	    				if(result.length == 0){
 	    					swal({
 	    						type: 'error',
-	    						title: 'No driver available at the moment',
+	    						title: 'No rider available at the moment',
 	    						text: 'Try again later',
 	    					});
 	    				}
@@ -372,7 +372,7 @@
 			    						success: result => {
 			    							swal({
 			    								type: 'info',
-			    								title: 'Driver Found!',
+			    								title: 'Rider Found!',
 			    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
 			    							}).then(() => {
 			    								$('#table').DataTable().ajax.reload();
@@ -409,7 +409,7 @@
 			    						success: result => {
 			    							swal({
 			    								type: 'info',
-			    								title: 'Driver Found!',
+			    								title: 'Rider Found!',
 			    								text: 'Your delivery will be assigned to ' + selected.fname + " " + selected.lname,
 			    							}).then(() => {
 			    								$('#table').DataTable().ajax.reload();
@@ -451,7 +451,7 @@
 	    		})
 	    	});
 
-	    	$('[data-original-title="Check Driver Location"]').on('click', elem => {
+	    	$('[data-original-title="Check Rider Location"]').on('click', elem => {
 	    		let id = $(elem.target).data('id');
       			var markers = [];
 
@@ -559,7 +559,7 @@
 	    		}
 	    	});
 
-	    	$('[data-original-title="Rate Driver"]').on('click', e => {
+	    	$('[data-original-title="Rate Rider"]').on('click', e => {
 	    		let temp = $(e.target);
 	    		let id = temp.data('id');
 	    		let oRating = temp.data('rating');

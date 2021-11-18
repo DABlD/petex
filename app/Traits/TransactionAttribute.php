@@ -7,7 +7,7 @@ trait TransactionAttribute{
 	public function getActionsAttribute(){
 		if(auth()->user()->role != "Admin"){
 			if($this->status == "To Process"){
-				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Driver" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '">' .
+				return 	'<a class="btn btn-success" data-toggle="tooltip" title="Find Rider" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '">' .
 					        '<span class="fa fa-search" data-id="' . $this->id . '" data-schedule="' . $this->schedule . '"></span>' .
 					   '</a>&nbsp;' . 
 					   '<a class="btn btn-danger" data-toggle="tooltip" title="Cancel" data-status="' . $this->status . '" data-id="' . $this->id . '">' .
@@ -21,7 +21,7 @@ trait TransactionAttribute{
 					   '<a class="btn btn-warning" data-toggle="tooltip" title="View Files" data-files=`' . $this->files . '`>' .
 					        '<span class="fa fa-file" data-files=`' . $this->files . '`></span>' .
 					   '</a>&nbsp;' .
-					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Driver Location" data-id="' . $this->tid . '">' .
+					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Rider Location" data-id="' . $this->tid . '">' .
 				   	        '<span class="fa fa-search" data-id="' . $this->tid . '"></span>' .
 				   	    '</a>&nbsp;';
 			}
@@ -35,12 +35,12 @@ trait TransactionAttribute{
 					   '<a class="btn btn-warning" data-toggle="tooltip" title="View Files" data-files=`' . $this->files . '`>' .
 					        '<span class="fa fa-file" data-files=`' . $this->files . '`></span>' .
 					   '</a>&nbsp;' .
-					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Driver Location" data-id="' . $this->tid . '">' .
+					   '<a class="btn btn-info" data-toggle="tooltip" title="Check Rider Location" data-id="' . $this->tid . '">' .
 				   	        '<span class="fa fa-search" data-id="' . $this->tid . '"></span>' .
 				   	    '</a>&nbsp;';
 			}
 			else if($this->status == "Delivered"){
-				return 	'<a class="btn btn-primary" data-toggle="tooltip" title="Rate Driver" data-id="' . $this->id . '" data-rating="' . $this->rating . '">' .
+				return 	'<a class="btn btn-primary" data-toggle="tooltip" title="Rate Rider" data-id="' . $this->id . '" data-rating="' . $this->rating . '">' .
 					        '<span class="fa fa-star" data-id="' . $this->id . '" data-rating="' . $this->rating . '"></span>' .
 					   '</a>&nbsp;' .
 					   '<a class="btn btn-info" data-toggle="tooltip" title="View Proof of Delivery" data-proof="' . $this->proof . '">' .
