@@ -84,6 +84,43 @@ class BookingController extends Controller
 		echo json_encode($drivers);
 	}
 
+	public function getDriversLocation2(Request $req){
+		$drivers = User::where('role', 'Rider')
+			->join('trackers', 'trackers.uid', '=', 'users.id')
+			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2', 'trackers.updated_at as last_online'])
+			->get();
+
+		foreach($drivers as $key => $driver){
+			$schedules = Transactions::where([
+				['tid', '=', $driver->id],
+				['schedule', '!=', "ASAP"],
+				['schedule', '>', $req->schedule],
+			])->get();
+
+			if($schedules != null){
+				foreach ($schedules as $schedule) {
+					if(now()->parse($req->schedule)->diffInSeconds(now()->parse($schedule->schedule)) <= 3600){
+						unset($drivers[$key]);
+					}
+				}
+			}
+
+			$transactions = Transactions::where([
+				['status', '=', 'Delivered'],
+				['tid', '=', $driver->id],
+				['rating', '!=', null]
+			])->pluck('rating')->toArray();
+			
+			// if(now()->diffInMinutes(now()->parse($driver->last_online)) > 15){
+			//     unset($drivers[$key]);
+			// }
+
+			$driver->ave_ratings = count($transactions) > 0 ? ((array_sum($transactions) / count($transactions)) / 5) * 100 : 0;
+		}
+    
+		echo json_encode($drivers);
+	}
+
 	public function getDriverLocation(Request $req){
 		echo json_encode(User::where('users.id', $req->id)
 			->join('trackers', 'trackers.uid', '=', 'users.id')

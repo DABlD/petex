@@ -17,6 +17,17 @@
 
                         <div class="row row1">
                             <div class="col-md-4">
+
+                                <div class="row">
+                                    <label for="schedule">Schedule <h6 style="color: red; display: inline-block; vertical-align:baseline;">(if not ASAP)</h6></label>
+                                    <input type="text" class="form-control" name="schedule" id="schedule" placeholder="Select Schedule" readonly>
+                                    <span class="invalid-feedback hidden" role="alert">
+                                        <strong id="scheduleError"></strong>
+                                    </span>
+                                </div>
+
+                                <br>
+
                                 <div class="row">
                                     <label for="fname">First Name</label>
                                     <input type="text" class="form-control puwy" name="fname" placeholder="Enter First Name" autofocus>
@@ -66,14 +77,6 @@
                                 </div>
 
                                 <br>
-
-                                <div class="row">
-                                    <label for="schedule">Schedule <h6 style="color: red; display: inline-block; vertical-align:baseline;">(if not today)</h6></label>
-                                    <input type="text" class="form-control" name="schedule" id="schedule" placeholder="Select Schedule" readonly>
-                                    <span class="invalid-feedback hidden" role="alert">
-                                        <strong id="scheduleError"></strong>
-                                    </span>
-                                </div>
 
                                 <input type="hidden" name="lat" id="lat">
                                 <input type="hidden" name="lng" id="lng">
@@ -203,9 +206,27 @@
 
         $('[name="schedule"]').flatpickr({
             altInput: true,
-            altFormat: 'F j, Y',
-            dateFormat: 'Y-m-d',
-            minDate: moment().add(1, 'day').format('YYYY-MM-DD')
+            altFormat: 'F j, Y H:i K',
+            dateFormat: 'Y-m-d H:i:ss',
+            enableTime: true,
+            minuteIncrement: 30,
+            minTime: moment().add("30", "m").format("HH:mm"),
+            minDate: moment().format('YYYY-MM-DD'),
+            onChange: (date, b, instance) => {
+                let tempT = "";
+                let tempD = "";
+
+                if(moment(date[0]).format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")){
+                    tempT = moment().add("30", 'm').format("HH:mm");
+                    tempD = moment().format("YYYY-MM-DD");
+                }
+                else{
+                    tempT = moment(moment(date[0]).format("YYYY-MM-DD")).add("15", "m").format("HH:mm");
+                    tempD = moment(moment(date[0])).format("YYYY-MM-DD");
+                }
+
+                instance.setDate(tempD +  " " + tempT);
+            }
         });
 
         // VALIDATE ON SUBMIT

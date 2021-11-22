@@ -89,7 +89,7 @@
                     render: function(date){
                     	date = date == null ? "ASAP" : date;
                         if(date != "ASAP"){
-                        	return toDate(date);
+                        	return toDateTime(date);
                         }
                         else{
                         	return date;
@@ -299,130 +299,148 @@
 	    	$('[data-original-title="Find Rider"]').on('click', elem => {
 	    		swal('Finding Rider');
 	    		swal.showLoading();
+	    		let schedule = $(elem.target).data('schedule');
 
-	    		$.ajax({
-	    			url: "{{ route('getDriversLocation') }}",
-	    			success: results => {
-	    				results = JSON.parse(results);
-	    				let result = [];
-	    				
-	    			    Object.keys(results).forEach(a => {
-	    			        result.push(results[a]);
-	    			    });
-
-	    				if(result.length == 0){
-	    					swal({
-	    						type: 'error',
-	    						title: 'No rider available at the moment',
-	    						text: 'Try again later',
-	    					});
+	    		if(schedule == "ASAP"){
+		    		$.ajax({
+		    			url: "{{ route('getDriversLocation') }}",
+		    			success: results => {
+		    				assignDriver(results, elem);
+		    			}
+		    		});
+	    		}
+	    		else{
+	    			$.ajax({
+	    				url: "{{ route('getDriversLocation2') }}",
+	    				data: {
+	    					schedule: schedule
+	    				},
+	    				success: results => {
+	    					assignDriver(results, elem);
 	    				}
-	    				else{
-	    					if($(elem.target).data('schedule') == "ASAP"){
-			    				var closest = {distance: 100000};
-			    				var temp;
-			    				var eta = "0";
+	    			});	
+	    		}
 
-			    				result.forEach(rider => {
-		            				distance = new google.maps.DistanceMatrixService();
+	    	});
 
-		            				distance.getDistanceMatrix(
-		            				  {
-		            				    origins: [
-		            				    	{
-		            				    		lat: parseFloat(rider.lat),
-		            				    		lng: parseFloat(rider.lng)
-		            				    	}
-		            				    ],
-		            				    destinations: [
-		            				    	{
-		            				    		lat: parseFloat(rider.lat2),
-		            				    		lng: parseFloat(rider.lng2)
-		            				    	}
-		            				    ],
-		            				    travelMode: 'DRIVING',
-		            				  }, callback);
+	    	function assignDriver(results, elem){
+				results = JSON.parse(results);
+				let result = [];
+				
+			    Object.keys(results).forEach(a => {
+			        result.push(results[a]);
+			    });
 
-		            				function callback(response, status) {
-		            					eta = response.rows[0].elements[0].duration.text;
-		            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
-		            				    if(rider.distance < closest.distance){
-		            				    	if(rider.ave_ratings >= 60){
-		            				    		closest = rider;
-		            				    	}
-		            				    	else{
-		            				    		temp = rider;
-		            				    	}
-		            				    }
-		            				}
-			    				});
+				if(result.length == 0){
+					swal({
+						type: 'error',
+						title: 'No rider available at the moment',
+						text: 'Try again later',
+					});
+				}
+				else{
+					if($(elem.target).data('schedule') == "ASAP"){
+	    				var closest = {distance: 100000};
+	    				var temp;
+	    				var eta = "0";
 
-			    				setTimeout(() => {
-			    					if(closest.id == undefined && temp != ""){
-			    						closest = temp;
-			    					}
+	    				result.forEach(rider => {
+            				distance = new google.maps.DistanceMatrixService();
 
-			    					$.ajax({
-			    						url: "{{ route("assignDriver") }}",
-			    						data: {
-			    							tid: closest.id,
-			    							id: $(elem.target).data('id'),
-			    							eta: eta
-			    						},
-			    						success: result => {
-			    							swal({
-			    								type: 'info',
-			    								title: 'Rider Found!',
-			    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
-			    							}).then(() => {
-			    								$('#table').DataTable().ajax.reload();
-			    							});
-			    						}
-			    					});
-			    				}, 1500);
-	    					}
-	    					else{
-	    						var selected;
-			    				var temp;
+            				distance.getDistanceMatrix(
+            				  {
+            				    origins: [
+            				    	{
+            				    		lat: parseFloat(rider.lat),
+            				    		lng: parseFloat(rider.lng)
+            				    	}
+            				    ],
+            				    destinations: [
+            				    	{
+            				    		lat: parseFloat(rider.lat2),
+            				    		lng: parseFloat(rider.lng2)
+            				    	}
+            				    ],
+            				    travelMode: 'DRIVING',
+            				  }, callback);
 
-			    				result.forEach(rider => {
+            				function callback(response, status) {
+            					eta = response.rows[0].elements[0].duration.text;
+            				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
+            				    if(rider.distance < closest.distance){
             				    	if(rider.ave_ratings >= 60){
-            				    		selected = rider;
+            				    		closest = rider;
             				    	}
             				    	else{
             				    		temp = rider;
             				    	}
-			    				});
+            				    }
+            				}
+	    				});
 
-			    				setTimeout(() => {
-			    					if(selected == undefined && temp != ""){
-			    						selected = temp;
-			    					}
-
-			    					$.ajax({
-			    						url: "{{ route("assignDriver") }}",
-			    						data: {
-			    							tid: selected.id,
-			    							id: $(elem.target).data('id'),
-			    							eta: eta
-			    						},
-			    						success: result => {
-			    							swal({
-			    								type: 'info',
-			    								title: 'Rider Found!',
-			    								text: 'Your delivery will be assigned to ' + selected.fname + " " + selected.lname,
-			    							}).then(() => {
-			    								$('#table').DataTable().ajax.reload();
-			    							});
-			    						}
-			    					});
-			    				}, 1500);
+	    				setTimeout(() => {
+	    					if(closest.id == undefined && temp != ""){
+	    						closest = temp;
 	    					}
-	    				}
-	    				
-	    			}
-	    		});
-	    	});
+
+	    					$.ajax({
+	    						url: "{{ route("assignDriver") }}",
+	    						data: {
+	    							tid: closest.id,
+	    							id: $(elem.target).data('id'),
+	    							eta: eta
+	    						},
+	    						success: result => {
+	    							swal({
+	    								type: 'info',
+	    								title: 'Rider Found!',
+	    								text: 'Your delivery will be assigned to ' + closest.fname + " " + closest.lname,
+	    							}).then(() => {
+	    								$('#table').DataTable().ajax.reload();
+	    							});
+	    						}
+	    					});
+	    				}, 1500);
+					}
+					else{
+						var selected;
+	    				var temp;
+
+	    				result.forEach(rider => {
+    				    	if(rider.ave_ratings >= 60){
+    				    		selected = rider;
+    				    	}
+    				    	else{
+    				    		temp = rider;
+    				    	}
+	    				});
+
+	    				setTimeout(() => {
+	    					if(selected == undefined && temp != ""){
+	    						selected = temp;
+	    					}
+
+	    					$.ajax({
+	    						url: "{{ route("assignDriver") }}",
+	    						data: {
+	    							tid: selected.id,
+	    							id: $(elem.target).data('id'),
+	    							eta: eta
+	    						},
+	    						success: result => {
+	    							swal({
+	    								type: 'info',
+	    								title: 'Rider Found!',
+	    								text: 'Your delivery will be assigned to ' + selected.fname + " " + selected.lname,
+	    							}).then(() => {
+	    								$('#table').DataTable().ajax.reload();
+	    							});
+	    						}
+	    					});
+	    				}, 1500);
+					}
+				}
+	    	}
 
 	    	$('[data-original-title="Already Picked-Up"]').on('click', elem => {
 	    		swal('Processing');
