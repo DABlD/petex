@@ -204,14 +204,14 @@
     <script>
         let bool;
 
-        $('[name="schedule"]').flatpickr({
+        let picker = $('[name="schedule"]').flatpickr({
             altInput: true,
             altFormat: 'F j, Y H:i K',
             dateFormat: 'Y-m-d H:i:ss',
             enableTime: true,
-            minuteIncrement: 30,
-            minTime: moment().add("30", "m").format("HH:mm"),
+            minuteIncrement: 15,
             minDate: moment().format('YYYY-MM-DD'),
+            minTime: "14:00",
             onChange: (date, b, instance) => {
                 let tempT = "";
                 let tempD = "";
@@ -225,7 +225,7 @@
                     tempD = moment(moment(date[0])).format("YYYY-MM-DD");
                 }
 
-                instance.setDate(tempD +  " " + tempT);
+                picker.set("minTime", tempT);
             }
         });
 
