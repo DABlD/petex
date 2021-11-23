@@ -172,6 +172,7 @@
 
       function mapInit(){
         @if(auth()->user()->role == "Rider")
+        console.log('asd');
           setTimeout(() => {
             navigator.geolocation.getCurrentPosition(position => {
                 dlat = position.coords.latitude;
@@ -225,7 +226,7 @@
                     if(result != null)
                     {
                       $('.comments').html("N/A");
-                      console.log(result.status);
+                      console.log(result.status, "status");
  
                       sloc = {
                         lat: parseFloat(result.slat),
@@ -442,6 +443,246 @@
                         checkDelivery();
                       }
                     }, 7000);
+                  }
+                  else{
+                    // IF NOT ASAP, CHECK SCHEDULED
+                    $.ajax({
+                      url: '{{ route('checkRiderDelivery2') }}',
+                      success: result => {
+
+                        console.log(result, result != "null");
+                        if(result != "null"){
+                          result = JSON.parse(result);
+
+                          if(true){
+                            $('.comments').html("N/A");
+
+                            
+                            sloc = {
+                              lat: parseFloat(result.slat),
+                              lng: parseFloat(result.slng)
+                            };
+
+                            dloc = {
+                              lat: parseFloat(result.lat),
+                              lng: parseFloat(result.lng)
+                            }
+
+                            rloc = {
+                              lat: parseFloat(rlat),
+                              lng: parseFloat(rlng)
+                            }
+
+                            console.log(sloc);
+                            console.log(dloc);
+                            console.log(rloc);
+
+                            if(result.status == "Finding Driver"){
+                                swal({
+                                    title: 'Would you like to accept this scheduled booking?',
+                                    html: `
+                                      <h4>
+                                      Name: ${result.fname} ${result.lname}<br>
+                                      Price: ₱${result.price.toFixed(2)}<br>
+                                      Address: ${result.address}<br>
+                                      Schedule: ${moment(result.schedule).format("MMM DD, YYYY hh:mm A")}<br><br>
+                                      <span style="color:red;"><b>NOTE:</b> You will not be able to accept a booking 1 hour before this scheduled booking.</span>
+
+                                      <br>
+                                      <br>
+
+                                      <div id="map2" style="width: 100%; height: 50vh;"></div>
+                                      </h4>
+                                    `,
+                                    showCancelButton: true,
+                                    cancelButtonText: 'Decline',
+                                    confirmButtonText: 'Accept',
+                                    cancelButtonColor: '#f76c6b',
+                                    width: '80vh',
+                                    allowOutsideClick: false,
+                                    onOpen: () => {
+                                        $('#swal2-content').css({
+                                            "text-align": "left",
+                                            "padding-left": '30px'
+                                        })
+
+                                        map = new google.maps.Map(document.getElementById("map2"), {
+                                            center: rloc,
+                                            zoom: 12,
+                                        });
+
+                                        let dMarker = new google.maps.Marker({
+                                          position: dloc,
+                                          map,
+                                          label: {
+                                            color: 'white',
+                                            text: 'C'
+                                          },
+                                        });
+
+                                        directionsService2 = new google.maps.DirectionsService();
+                                        directionsRenderer2 = new google.maps.DirectionsRenderer();
+
+                                        directionsRenderer2.setMap(map);
+
+                                        let request2 = {
+                                            origin: rloc,
+                                            destination: sloc,
+                                            travelMode: 'DRIVING'
+                                        };
+                                        directionsService2.route(request2, function(result, status) {
+                                          if (status == 'OK') {
+                                            directionsRenderer2.setOptions({
+                                                polylineOptions: {
+                                                  strokeColor: 'red'
+                                                }
+                                            }); 
+                                            directionsRenderer2.setDirections(result);
+                                          }
+                                        });
+
+                                        // DISTANCE
+                                        distance.getDistanceMatrix({
+                                          origins: [sloc],
+                                          destinations: [dloc],
+                                          travelMode: 'DRIVING',
+                                        }, callback);
+
+                                        function callback(response, status) {
+                                          eta = response.rows[0].elements[0].duration.value;
+
+                                          // DISTANCE
+                                          distance.getDistanceMatrix({
+                                            origins: [rloc],
+                                            destinations: [sloc],
+                                            travelMode: 'DRIVING',
+                                          }, callback2);
+
+                                          function callback2(response, status) {
+                                            eta2 = response.rows[0].elements[0].duration.value;
+                                            console.log(Math.ceil((eta + eta2) / 60) + " min");
+                                            $('#eta').html(Math.ceil((eta + eta2) / 60) + " min");
+                                          }
+                                        }
+                                    }
+                                }).then(choice => {
+                                    if(choice.dismiss == "cancel"){
+                                      $.ajax({
+                                        url: '{{ route('updateStatus') }}',
+                                        data: {
+                                          id: result.id,
+                                          status: 'To Process',
+                                          tid: null
+                                        },
+                                        success: result => {
+                                          setTimeout(() => {
+                                            swal({
+                                              type: 'success',
+                                              title: 'Success',
+                                              text: 'Completed!',
+                                              showConfirmButton: false,
+                                              timer: 2000
+                                            });
+                                          });
+                                        }
+                                      });
+                                    }
+                                    else if(choice.value){
+                                      $.ajax({
+                                        url: '{{ route('updateStatus') }}',
+                                        data: {
+                                          id: result.id,
+                                          status: 'For Pickup',
+                                        },
+                                        success: result => {
+                                          setTimeout(() => {
+                                            swal({
+                                              type: 'success',
+                                              title: 'Success',
+                                              text: 'Completed!',
+                                              showConfirmButton: false,
+                                              timer: 2000
+                                            });
+                                          });
+                                        }
+                                      });
+                                    }
+
+                                    checkDelivery();
+                                });
+                            }
+                            else if(result.status == "Cancelled"){
+                              $('.box-title').html('Your last delivery was cancelled');
+                                  $('.comments').html('');
+                            }
+                            else if(result.status != "Rider Cancel"){
+                              $('.sname').html(result.sfname + " " + result.slname);
+                              $('.scontact').html(result.scontact);
+                              $('.sname').parent().removeClass('hidden');
+                              $('.scontact').parent().removeClass('hidden');
+
+                              if(result.comments != ""){
+                                $('.comments').html(result.comments);
+                              }
+
+                              // IF PICKUP
+                              if(result.status == "For Pickup"){
+                                  $('.pickedUp').removeClass('hidden');
+                                $('.cancelBooking').removeClass('hidden');
+                                if(moment.duration(moment().diff(moment(result.created_at))).asSeconds() < 7)
+                                {
+                                  swal({
+                                    title: 'You have a new delivery!'
+                                  });
+                                }
+
+                                $('.box-title').html('For Pickup');
+                                showDirection(rloc, sloc);
+
+                                // let dMarker = new google.maps.Marker({
+                                //   position: dloc,
+                                //   map,
+                                //   label: {
+                                //     color: 'white',
+                                //     text: 'D'
+                                //   }
+                                // });
+
+                                // markers.push(dMarker);
+                              }
+
+                              // IF FOR DELIVERY
+                              else if(result.status == "For Delivery"){
+                                $('.box-title').html('For Delivery');
+                                showDirection(rloc, dloc);
+                                $('.delivery').removeClass('hidden');
+                                $('.pickedUp').addClass('hidden');
+                                $('.cancelBooking').addClass('hidden');
+                              }
+                              else if(result.status == "Rider Cancel"){
+                                  $('.comments').html('');
+                                $('.pickedUp').addClass('hidden');
+                                $('.cancelBooking').addClass('hidden');
+                              }
+                              else if (result.status == "Delivered"){
+                                  $('.sname').parent().addClass('hidden');
+                                  $('.scontact').parent().addClass('hidden');
+                                  $('.comments').html('');
+                              }
+                            }
+                          }
+                        }
+
+                        
+
+                        setTimeout(() => {
+                          if(!$('#swal2-content').is(":visible")){
+                            checkDelivery();
+                          }
+                        }, 7000);
+                      }
+
+                    });
                   }
                 }
             });

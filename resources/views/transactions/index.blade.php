@@ -664,7 +664,7 @@
 	    	$('#table').DataTable().ajax.reload();
 	    	setTimeout(() => {
 	    		renewTable();
-	    	}, 10000);
+	    	}, 15000);
     	}
 
     	renewETA();

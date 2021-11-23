@@ -117,7 +117,7 @@
                     }
                 },
                 {
-                    targets: [9],
+                    targets: [10],
                     render: function(date){
                         return moment(date).format("MMM DD, YYYY h:mm A");
                     }

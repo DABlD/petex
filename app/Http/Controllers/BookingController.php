@@ -158,9 +158,66 @@ class BookingController extends Controller
 		if($temp != null){
 			if(!($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null)){
 				if(now()->toDateString() < $temp->schedule){
-					$temp = "null";
+					$temp = null;
 				}
 			}
+		}
+
+		echo json_encode($temp);
+	}
+
+	// FOR SCHEDULE FETCH
+	public function checkRiderDelivery2(Request $req){
+		$cond = [
+			['tid', '=', auth()->user()->id],
+			['schedule', 'LIKE', "2%"],
+			['status', '=', "Finding Driver"],
+		];
+
+		$temp = Transactions::where($cond)
+			->select(
+				'transactions.*',
+				'users.lat as slat',
+				'users.lng as slng',
+				'users.address as saddress',
+				'users.fname as sfname',
+				'users.lname as slname',
+				'users.contact as scontact'
+			)
+			->join('users', 'users.id', '=', 'transactions.sid')
+			->first();
+
+		if(count($temp) == 0){
+			$cond = [
+				['tid', '=', auth()->user()->id],
+				['schedule', 'LIKE', "2%"],
+				['status', '!=', "Delivered"],
+				['status', '!=', "Cancelled"],
+				['status', '!=', "Rider Cancel"],
+			];
+
+			$temp = Transactions::where($cond)
+				->select(
+					'transactions.*',
+					'users.lat as slat',
+					'users.lng as slng',
+					'users.address as saddress',
+					'users.fname as sfname',
+					'users.lname as slname',
+					'users.contact as scontact'
+				)
+				->join('users', 'users.id', '=', 'transactions.sid')
+				->get();
+
+			$temp2 = null;
+
+			foreach ($temp as $transaction) {
+				if(now()->diffInSeconds(now()->parse($transaction->schedule)) <= 3600){
+					$temp2 = $transaction;
+				}
+			}
+
+			$temp = $temp2;
 		}
 
 		echo json_encode($temp);

@@ -99,6 +99,7 @@ Route::group([
 		Route::get('getDriversLocation2', 'BookingController@getDriversLocation2')->name('getDriversLocation2');
 		Route::get('assignDriver', 'BookingController@assignDriver')->name('assignDriver');
 		Route::get('checkRiderDelivery', 'BookingController@checkRiderDelivery')->name('checkRiderDelivery');
+		Route::get('checkRiderDelivery2', 'BookingController@checkRiderDelivery2')->name('checkRiderDelivery2');
 		Route::get('updateStatus', 'BookingController@updateStatus')->name('updateStatus');
 		Route::post('uploadProof', 'BookingController@uploadProof')->name('uploadProof');
 
