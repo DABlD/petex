@@ -284,7 +284,7 @@ class BookingController extends Controller
 		$temp->save($path);
 
 		$transaction = Transactions::where('transactions.id', $req->id)
-							->select(['transactions.*', 'fname', 'lname'])
+							->select(['transactions.*', 'fname', 'lname', 's.contact as scontact'])
 							->join('users as s', 's.id', '=', 'transactions.sid')
 							->join('users as r', 'r.id', '=', 'transactions.tid')
 							->first();
@@ -292,10 +292,8 @@ class BookingController extends Controller
 		if($transaction->tid){
 			$message = null;
 
-			if($req->status == "Rider Cancel"){
-				$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
-				$this->itexmo($transaction->scontact, $message);
-			}
+			$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
+			$this->itexmo($transaction->scontact, $message);
 		}
 
 		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
