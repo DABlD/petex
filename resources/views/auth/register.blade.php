@@ -354,14 +354,14 @@
 
                         showError(input2, temp2, error2, 'Password do not match');
                     }
-                    else if(input.value.length < 6){
-                        showError(input, temp, error, 'Password must be at least 6 characters');
+                    else if(input.value.length < 8){
+                        showError(input, temp, error, 'Password must be at least 8 characters');
 
                         input2 = $('[name="password"]')[0];
                         temp2 = $(input2);
                         error2 = $('#' + temp2.attr('name') + 'Error');
 
-                        showError(input2, temp2, error2, 'Password must be at least 6 characters');
+                        showError(input2, temp2, error2, 'Password must be at least 8 characters');
                     }
                 }
 
