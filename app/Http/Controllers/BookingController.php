@@ -33,7 +33,31 @@ class BookingController extends Controller
 		return redirect()->route('transactions.index');
 	}
 
+	// SMS
+	public function itexmo($number,$message){
+		$ch = curl_init();
+		$itexmo = array('1' => $number, '2' => $message, '3' => "TR-PETEX590172_7YU18", 'passwd' => "rlnh6gh7p&");
+		curl_setopt($ch, CURLOPT_URL,"https://www.itexmo.com/php_api/api.php");
+		curl_setopt($ch, CURLOPT_POST, 1);
+		 curl_setopt($ch, CURLOPT_POSTFIELDS, 
+		          http_build_query($itexmo));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		echo curl_exec ($ch);
+		curl_close ($ch);
+	}
+
 	public function cancel($id){
+		$transaction = Transactions::where('transactions.id', $id)
+							->select(['transactions.*', 's.fname as sfname', 's.lname as slname', 'r.contact as rcontact'])
+							->join('users as s', 's.id', '=', 'transactions.sid')
+							->join('users as r', 'r.id', '=', 'transactions.tid')
+							->first();
+
+		if($transaction->tid){
+			$message = 'Transaction with ' . $transaction->sfname . ' ' . $transaction->slname . ' is cancelled';
+			$this->itexmo($transaction->rcontact, $message);
+		}
+
 		echo Transactions::where('id', $id)->update(['status' => 'Cancelled']);
 	}
 
@@ -224,6 +248,27 @@ class BookingController extends Controller
 	}
 
 	public function updateStatus(Request $req){
+		$transaction = Transactions::where('transactions.id', $req->id)
+							->select(['transactions.*', 'r.fname as rfname', 'r.lname as rlname', 's.contact as scontact'])
+							->join('users as s', 's.id', '=', 'transactions.sid')
+							->join('users as r', 'r.id', '=', 'transactions.tid')
+							->first();
+
+		if($transaction->tid){
+			$message = null;
+
+			if($req->status == "Rider Cancel"){
+				$message = 'Transaction has been cancelled by Rider ' . $transaction->rfname . ' ' . $transaction->rlname;
+			}
+			else if($req->status == 'For Pickup' || $req->status == "For Delivery"){
+				$message = 'Your transaction is ' . $req->status;
+			}
+
+			if($message){
+				$this->itexmo($transaction->scontact, $message);
+			}
+		}
+
 		echo Transactions::where('id', $req->id)->update($req->except(['_token', 'id']));
 	}
 
@@ -237,6 +282,21 @@ class BookingController extends Controller
 		$path = $destinationPath . $name;
 
 		$temp->save($path);
+
+		$transaction = Transactions::where('transactions.id', $req->id)
+							->select(['transactions.*', 'fname', 'lname'])
+							->join('users as s', 's.id', '=', 'transactions.sid')
+							->join('users as r', 'r.id', '=', 'transactions.tid')
+							->first();
+
+		if($transaction->tid){
+			$message = null;
+
+			if($req->status == "Rider Cancel"){
+				$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
+				$this->itexmo($transaction->scontact, $message);
+			}
+		}
 
 		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
 	}
