@@ -300,8 +300,9 @@
 	    		swal('Finding Rider');
 	    		swal.showLoading();
 	    		let schedule = $(elem.target).data('schedule');
+	    		console.log(schedule);
 
-	    		if(schedule == "ASAP"){
+	    		if(schedule == ""){
 		    		$.ajax({
 		    			url: "{{ route('getDriversLocation') }}",
 		    			success: results => {
