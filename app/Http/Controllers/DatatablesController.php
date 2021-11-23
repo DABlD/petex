@@ -21,6 +21,40 @@ class DatatablesController extends Controller
     	return Datatables::of($users)->rawColumns(['actions'])->make(true);
 	}
 
+	public function scheduled_booking(){
+		$cond = [
+			['tid', '=', auth()->user()->id],
+			['schedule', 'LIKE', "2%"], //2020 ONWARDS. TO NOT GET NULL AND ASAP
+			['status', '!=', "Cancelled"],
+			['status', '!=', "Rider Cancel"]
+		];
+		$temp = Transactions::where($cond)
+			->select(
+				'transactions.*',
+				'users.lat as slat',
+				'users.lng as slng',
+				'users.address as saddress',
+				'users.fname as sfname',
+				'users.lname as slname',
+				'users.contact as scontact'
+				// 'r.lat as rlat',
+				// 'r.lng as rlng'
+			)
+			->join('users', 'users.id', '=', 'transactions.sid')
+			->get();
+
+		// dd($temp);
+		// if($temp != null){
+		// 	if(!($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null)){
+		// 		if(now()->toDateString() < $temp->schedule){
+		// 			$temp = "null";
+		// 		}
+		// 	}
+		// }
+
+    	return Datatables::of($temp)->rawColumns(['actions'])->make(true);
+	}
+
 	public function transactions(){
 		if(auth()->user()->role == "Admin"){
 			$transactions = Transactions::all();

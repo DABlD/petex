@@ -116,5 +116,6 @@ Route::group([
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');
+		Route::get('datatables/scheduled_booking', 'DatatablesController@scheduled_booking')->name('datatables.scheduled_booking');
 	}
 );
