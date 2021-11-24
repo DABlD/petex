@@ -81,6 +81,7 @@
                                 <input type="hidden" name="lat" id="lat">
                                 <input type="hidden" name="lng" id="lng">
                                 <input type="hidden" name="price" id="price">
+                                <input type="hidden" name="eta" id="eta">
 
                                 <br>
                             </div>
@@ -94,11 +95,13 @@
 
                         <div class="row row2">
                             <div class="col-md-2">
+                                <p style="margin-bottom: 3px;">ETA: </p>
                                 <p style="margin-bottom: 3px;">Base Fare: </p>
                                 <p style="margin-bottom: 3px;">Over Mileage(2km Base Distance): </p>
                                 <p style="margin-bottom: 3px;">Total: </p>
                             </div>
                             <div class="col-md-2">
+                                <p style="margin-bottom: 3px;"><span id="eta2">Select Location</span> </p>
                                 <p style="margin-bottom: 3px;">&#8369;300.00</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="overM">0.00</span> (Distance: <span id="distance">0.0</span> KM)</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="total">300.00</span></p>
@@ -197,6 +200,7 @@
     <script src="{{ asset('js/flatpickr.js') }}"></script>
     <script src="{{ asset('js/moment.js') }}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
+    <script src="https://unpkg.com/paymaya-js-sdk@2.0.0/dist/bundle.js"></script>
 @endpush
 
 @push('after-scripts')
@@ -263,6 +267,42 @@
                 !$('.is-invalid').is(':visible')? $('#createForm').submit() : '';
             }, 1000)
         });
+
+        function testPay(){
+            const myExampleObject = {
+              "totalAmount": {
+                "value": 100,
+                "currency": "PHP",
+              },
+              "items": [
+                {
+                  "name": "Delivery",
+                  "quantity": 1,
+                  "amount": {
+                    "value": 100,
+                    "details": {
+                      "discount": 0,
+                      "serviceCharge": 0,
+                      "shippingFee": 0,
+                      "tax": 0,
+                      "subtotal": 100
+                    }
+                  },
+                  "totalAmount": {
+                    "value": 100,
+                    "details": {
+                      "subtotal": 100
+                    }
+                  }
+                }
+              ],
+              "logoUrl": "https://petex/favicon.ico",
+              "requestReferenceNumber": moment().format("YYYYMMDDhhmmss"),
+            };
+
+            PayMayaSDK.init('pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah', true);
+            PayMayaSDK.createCheckout(myExampleObject);
+        }
 
         async function showError(input, temp, error, message){
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -435,10 +475,14 @@
                     let distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
                     let duration = response.rows[0].elements[0].duration.valu / 60;
 
+
+                    let eta = response.rows[0].elements[0].duration.text;
                     let temp = distance <= 2 ? distance * 0 : (Math.ceil(distance - 2) * 40).toFixed(2);
                     
                     $('#overM').text(temp);
                     $('#distance').text(distance);
+                    $('#eta').val(eta);
+                    $('#eta2').text(eta);
                     $('#total').text((300.00 + parseFloat(temp)).toFixed(2));
                     $('#price').val((300.00 + parseFloat(temp)).toFixed(2));
                 }
