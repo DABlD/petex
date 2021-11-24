@@ -62,7 +62,7 @@
             <div class="col-12">
                 <div class="welcome-text text-center">
                     <h2 data-animation="fadeInUp" data-delay="100ms">Modes of Payment</h2>
-                    <p data-animation="fadeInUp" data-delay="300ms">The PetEx offers two modes of payment. It's either you pay through bank payment or you pay through cash on delivery.</p>
+                    <p data-animation="fadeInUp" data-delay="300ms">The PetEx offers E-Payment as mode of payment.</p>
                     <div class="welcome-btn-group">
                     </div>
                 </div>
@@ -75,8 +75,8 @@
         <div class="row h-100 align-items-center">
             <div class="col-12">
                 <div class="welcome-text text-center">
-                    <h2 data-animation="fadeInDown" data-delay="100ms">Fixed Rate</h2>
-                    <p data-animation="fadeInDown" data-delay="300ms">Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus.</p>
+                    <h2 data-animation="fadeInDown" data-delay="100ms">Standard Rate</h2>
+                    <p data-animation="fadeInDown" data-delay="300ms">Standard starting rate is applied on all areas within Metro Manila</p>
                     <div class="welcome-btn-group">
                     </div>
                 </div>
