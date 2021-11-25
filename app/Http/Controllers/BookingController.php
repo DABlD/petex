@@ -78,6 +78,7 @@ class BookingController extends Controller
 
 	public function getDriversLocation(){
 		$drivers = User::where('role', 'Rider')
+			->where('trackers.logged_in', "Yes")
 			->join('trackers', 'trackers.uid', '=', 'users.id')
 			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2', 'trackers.updated_at as last_online'])
 			->get();
@@ -110,6 +111,7 @@ class BookingController extends Controller
 
 	public function getDriversLocation2(Request $req){
 		$drivers = User::where('role', 'Rider')
+			->where('trackers.logged_in', "Yes")
 			->join('trackers', 'trackers.uid', '=', 'users.id')
 			->select(['users.*', 'trackers.lat as lat2', 'trackers.lng as lng2', 'trackers.updated_at as last_online'])
 			->get();
@@ -284,7 +286,7 @@ class BookingController extends Controller
 		$temp->save($path);
 
 		$transaction = Transactions::where('transactions.id', $req->id)
-							->select(['transactions.*', 'fname', 'lname', 's.contact as scontact'])
+							->select(['transactions.*', 's.contact as scontact'])
 							->join('users as s', 's.id', '=', 'transactions.sid')
 							->join('users as r', 'r.id', '=', 'transactions.tid')
 							->first();
