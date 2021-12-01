@@ -345,6 +345,7 @@
                     }
                 }
                 else if(temp.attr('name') == 'confirm_password'){
+                    let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{6,15}$/;
                     if(input.value != $('[name="password"]').val()){
                         showError(input, temp, error, 'Password do not match');
 
@@ -362,6 +363,13 @@
                         error2 = $('#' + temp2.attr('name') + 'Error');
 
                         showError(input2, temp2, error2, 'Password must be at least 8 characters');
+                    }
+                    else if(!regex.test($('[name="password"]').val())){
+                        input2 = $('[name="password"]')[0];
+                        temp2 = $(input2);
+                        error2 = $('#' + temp2.attr('name') + 'Error');
+
+                        showError(input2, temp2, error2, 'Password must contain 1 uppercase, lowercase, number and special character');
                     }
                 }
 

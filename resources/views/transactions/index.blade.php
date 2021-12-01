@@ -340,12 +340,14 @@
 					});
 				}
 				else{
-					if($(elem.target).data('schedule') == "ASAP"){
+				    console.log($(elem.target).data('schedule'));
+					if($(elem.target).data('schedule') == "ASAP" || $(elem.target).data('schedule') == ""){
 	    				var closest = {distance: 100000};
 	    				var temp;
 	    				var eta = "0";
 
 	    				result.forEach(rider => {
+	    				    console.log(rider, '1');
             				distance = new google.maps.DistanceMatrixService();
 
             				distance.getDistanceMatrix(
@@ -368,6 +370,8 @@
             				function callback(response, status) {
             					eta = response.rows[0].elements[0].duration.text;
             				    rider.distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
+            				    console.log(rider.fname, "distance:", rider.distance, "ratings:", rider.ave_ratings);
+            				    console.log(rider.distance, closest.distance);
             				    if(rider.distance < closest.distance){
             				    	if(rider.ave_ratings >= 60){
             				    		closest = rider;
@@ -408,6 +412,8 @@
 	    				var temp;
 
 	    				result.forEach(rider => {
+	    				    
+	    				    console.log(rider, '2');
     				    	if(rider.ave_ratings >= 60){
     				    		selected = rider;
     				    	}
@@ -592,6 +598,10 @@
 	    				<span class="fa fa-star fa-3x" id="5"></span>
 	    			`,
 	    			onOpen: () => {
+	    			    
+	    			    if(oRating > 0){
+	    			        $(".swal2-confirm").attr('disabled', 'disabled');
+	    			    }
 
     					for(let i = 0; i < oRating; i++){
     						$($('*[id].fa-star')[i]).addClass('checked');
