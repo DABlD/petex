@@ -64,7 +64,7 @@ class UsersController extends Controller
     public function update(Request $req){
         if(User::where('id', $req->id)->update($req->except(['_token']))){
             $req->session()->flash('success', 'Profile Successfully Updated.');
-            return redirect()->route('users.index');
+            return back();
         }
         else{
             $req->session()->flash('error', 'There was a problem updating the user. Try again.');

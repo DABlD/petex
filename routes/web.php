@@ -92,6 +92,7 @@ Route::group([
 		Route::get('getAll', 'BookingController@getAll')->name('getAll');
 
 		Route::post('create', 'BookingController@create')->name('transactions.store');
+		Route::get('paymentSuccess', 'BookingController@paymentSuccess');
 
 		Route::get('uploadLocation', 'BookingController@uploadLocation')->name('uploadLocation');
 		Route::get('getDriverLocation', 'BookingController@getDriverLocation')->name('getDriverLocation');

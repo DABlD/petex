@@ -200,7 +200,7 @@
     <script src="{{ asset('js/flatpickr.js') }}"></script>
     <script src="{{ asset('js/moment.js') }}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
-    <script src="https://unpkg.com/paymaya-js-sdk@2.0.0/dist/bundle.js"></script>
+    <!--<script src="https://unpkg.com/paymaya-js-sdk@2.0.0/dist/bundle.js"></script>-->
 @endpush
 
 @push('after-scripts')
@@ -265,6 +265,7 @@
             setTimeout(() => {
                 swal.close();
                 !$('.is-invalid').is(':visible')? $('#createForm').submit() : '';
+                // !$('.is-invalid').is(':visible')? submit() : '';
             }, 1000)
         });
 
@@ -302,6 +303,79 @@
             PayMayaSDK.init('pk-yaj6GVzYkce52R193RIWpuRR5tTZKqzBWsUeCkP9EAf', true);
             PayMayaSDK.createCheckout(myExampleObject);
         }
+        
+        // function submit(){
+        //     let schedule = $('[name="schedule"]').val();
+        //     let fname = $('[name="fname"]').val();
+        //     let lname = $('[name="lname"]').val();
+        //     let contact = $('[name="contact"]').val();
+        //     let address = $('[name="address"]').val();
+        //     let comments = $('[name="comments"]').val();
+        //     let lat = $('[name="lat"]').val();
+        //     let lng = $('[name="lng"]').val();
+        //     let price = $('[name="price"]').val();
+        //     let eta = $('[name="eta"]').val();
+            
+        //     $.ajax({
+        //         url: '{{ route('transactions.store') }}',
+        //         data: {
+        //             schedule = schedule,
+        //             fname = fname,
+        //             lname = lname,
+        //             contact = contact,
+        //             address = address,
+        //             comments = comments,
+        //             lat = lat,
+        //             lng = lng,
+        //             price = price,
+        //             eta = eta
+        //         },
+        //         success: result => {
+        //             testPay(price);
+        //         }
+        //     })
+        // }
+
+        // function testPay(price){
+        //     const myExampleObject = {
+        //       "totalAmount": {
+        //         "value": price,
+        //         "currency": "PHP",
+        //       },
+        //       "items": [
+        //         {
+        //           "name": "Delivery",
+        //           "quantity": 1,
+        //           "amount": {
+        //             "value": price,
+        //             "details": {
+        //               "discount": 0,
+        //               "serviceCharge": 0,
+        //               "shippingFee": 0,
+        //               "tax": 0,
+        //               "subtotal": price
+        //             }
+        //           },
+        //           "totalAmount": {
+        //             "value": 100,
+        //             "details": {
+        //               "subtotal": price
+        //             }
+        //           }
+        //         }
+        //       ],
+        //     //   "logoUrl": "https://petx/favicon.ico",
+        //     //   "iconUrl": "https://petx/favicon.ico",
+            
+        //       "redirectUrl": {
+        //         "success": "https://www.petx.site/paymentSuccess",
+        //       },
+        //       "requestReferenceNumber": moment().format("YYYYMMDDhhmmss"),
+        //     };
+
+        //     PayMayaSDK.init('pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah', true);
+        //     PayMayaSDK.createCheckout(myExampleObject);
+        // }
 
         async function showError(input, temp, error, message){
             await new Promise(resolve => setTimeout(resolve, 1000));

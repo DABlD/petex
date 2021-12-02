@@ -93,7 +93,7 @@
                     }
                 },
                 {
-                  	targets: [5],
+                  	targets: [6],
                     render: function(price){
                         return parseFloat(price).toFixed(2);
                     }

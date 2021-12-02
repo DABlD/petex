@@ -47,16 +47,16 @@ class BookingController extends Controller
 	}
 
 	public function cancel($id){
-		$transaction = Transactions::where('transactions.id', $id)
-							->select(['transactions.*', 's.fname as sfname', 's.lname as slname', 'r.contact as rcontact'])
-							->join('users as s', 's.id', '=', 'transactions.sid')
-							->join('users as r', 'r.id', '=', 'transactions.tid')
-							->first();
+// 		$transaction = Transactions::where('transactions.id', $id)
+// 							->select(['transactions.*', 's.fname as sfname', 's.lname as slname', 'r.contact as rcontact'])
+// 							->join('users as s', 's.id', '=', 'transactions.sid')
+// 							->join('users as r', 'r.id', '=', 'transactions.tid')
+// 							->first();
 
-		if($transaction->tid){
-			$message = 'Transaction with ' . $transaction->sfname . ' ' . $transaction->slname . ' is cancelled';
-			$this->itexmo($transaction->rcontact, $message);
-		}
+// 		if($transaction->tid){
+// 			$message = 'Transaction with ' . $transaction->sfname . ' ' . $transaction->slname . ' is cancelled';
+// 			$this->itexmo($transaction->rcontact, $message);
+// 		}
 
 		echo Transactions::where('id', $id)->update(['status' => 'Cancelled']);
 	}
@@ -84,13 +84,20 @@ class BookingController extends Controller
 			->get();
 
 		foreach($drivers as $key => $driver){
-			$temp = Transactions::where('tid', $driver->id)->whereIn('status', ['For Pickup','For Delivery'])->first();
+			$temp = Transactions::where('tid', $driver->id)->where("schedule", null)->whereIn('status', ['Finding Driver', 'For Pickup','For Delivery'])->first();
 
-			if($temp != null){
-				if($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null || now()->toDateString() >= $temp->schedule){
+//             echo count((array)$temp) . " " . $driver->fname . " - ";
+//             echo count((array)$temp) != 0;
+			
+// 			echo '<br>';
+            
+			if(count((array)$temp) != 0){
+			 //   echo " - " . $temp->schedule;
+				// if($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null){
+				// if($temp->schedule == "ASAP" || $temp->schedule == "" || $temp->schedule == null || now()->toDateString() >= $temp->schedule){
 					unset($drivers[$key]);
 					continue;
-				}
+				// }
 			}
 
 			$transactions = Transactions::where([
@@ -137,9 +144,9 @@ class BookingController extends Controller
 				['rating', '!=', null]
 			])->pluck('rating')->toArray();
 			
-			// if(now()->diffInMinutes(now()->parse($driver->last_online)) > 15){
-			//     unset($drivers[$key]);
-			// }
+			if(now()->diffInMinutes(now()->parse($driver->last_online)) > 15){
+			    unset($drivers[$key]);
+			}
 
 			$driver->ave_ratings = count($transactions) > 0 ? ((array_sum($transactions) / count($transactions)) / 5) * 100 : 0;
 		}
@@ -250,26 +257,26 @@ class BookingController extends Controller
 	}
 
 	public function updateStatus(Request $req){
-		$transaction = Transactions::where('transactions.id', $req->id)
-							->select(['transactions.*', 'r.fname as rfname', 'r.lname as rlname', 's.contact as scontact'])
-							->join('users as s', 's.id', '=', 'transactions.sid')
-							->join('users as r', 'r.id', '=', 'transactions.tid')
-							->first();
+// 		$transaction = Transactions::where('transactions.id', $req->id)
+// 							->select(['transactions.*', 'r.fname as rfname', 'r.lname as rlname', 's.contact as scontact'])
+// 							->join('users as s', 's.id', '=', 'transactions.sid')
+// 							->join('users as r', 'r.id', '=', 'transactions.tid')
+// 							->first();
 
-		if($transaction->tid){
-			$message = null;
+// 		if($transaction->tid){
+// 			$message = null;
 
-			if($req->status == "Rider Cancel"){
-				$message = 'Transaction has been cancelled by Rider ' . $transaction->rfname . ' ' . $transaction->rlname;
-			}
-			else if($req->status == 'For Pickup' || $req->status == "For Delivery"){
-				$message = 'Your transaction is ' . $req->status;
-			}
+// 			if($req->status == "Rider Cancel"){
+// 				$message = 'Transaction has been cancelled by Rider ' . $transaction->rfname . ' ' . $transaction->rlname;
+// 			}
+// 			else if($req->status == 'For Pickup' || $req->status == "For Delivery"){
+// 				$message = 'Your transaction is ' . $req->status;
+// 			}
 
-			if($message){
-				$this->itexmo($transaction->scontact, $message);
-			}
-		}
+// 			if($message){
+// 				$this->itexmo($transaction->scontact, $message);
+// 			}
+// 		}
 
 		echo Transactions::where('id', $req->id)->update($req->except(['_token', 'id']));
 	}
@@ -285,18 +292,19 @@ class BookingController extends Controller
 
 		$temp->save($path);
 
-		$transaction = Transactions::where('transactions.id', $req->id)
-							->select(['transactions.*', 's.contact as scontact'])
-							->join('users as s', 's.id', '=', 'transactions.sid')
-							->join('users as r', 'r.id', '=', 'transactions.tid')
-							->first();
+// SMS
+// 		$transaction = Transactions::where('transactions.id', $req->id)
+// 			->select(['transactions.*', 's.contact as scontact'])
+// 			->join('users as s', 's.id', '=', 'transactions.sid')
+// 			->join('users as r', 'r.id', '=', 'transactions.tid')
+// 			->first();
 
-		if($transaction->tid){
-			$message = null;
+// 		if($transaction->tid){
+// 			$message = null;
 
-			$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
-			$this->itexmo($transaction->scontact, $message);
-		}
+// 			$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
+// 			$this->itexmo($transaction->scontact, $message);
+// 		}
 
 		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
 	}
