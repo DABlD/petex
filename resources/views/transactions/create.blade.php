@@ -296,11 +296,10 @@
                   }
                 }
               ],
-              "logoUrl": "https://petex/favicon.ico",
               "requestReferenceNumber": moment().format("YYYYMMDDhhmmss"),
             };
 
-            PayMayaSDK.init('pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah', true);
+            PayMayaSDK.init('pk-yaj6GVzYkce52R193RIWpuRR5tTZKqzBWsUeCkP9EAf', true);
             PayMayaSDK.createCheckout(myExampleObject);
         }
 
