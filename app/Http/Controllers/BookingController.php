@@ -294,10 +294,10 @@ class BookingController extends Controller
 
 // SMS
 // 		$transaction = Transactions::where('transactions.id', $req->id)
-// 							->select(['transactions.*', 's.contact as scontact'])
-// 							->join('users as s', 's.id', '=', 'transactions.sid')
-// 							->join('users as r', 'r.id', '=', 'transactions.tid')
-// 							->first();
+// 			->select(['transactions.*', 's.contact as scontact'])
+// 			->join('users as s', 's.id', '=', 'transactions.sid')
+// 			->join('users as r', 'r.id', '=', 'transactions.tid')
+// 			->first();
 
 // 		if($transaction->tid){
 // 			$message = null;
