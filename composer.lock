@@ -4,8 +4,61 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fcd4b12a4b8c58256ca3cd0066553a7",
+    "content-hash": "ff59a546b87c8bb6213624bfc5816203",
     "packages": [
+        {
+            "name": "aceraven777/laravel-paymaya",
+            "version": "v1.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aceraven777/laravel-paymaya.git",
+                "reference": "7f0da5126116d3e3d8bf6f4ee1c63048bfb8fcb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aceraven777/laravel-paymaya/zipball/7f0da5126116d3e3d8bf6f4ee1c63048bfb8fcb7",
+                "reference": "7f0da5126116d3e3d8bf6f4ee1c63048bfb8fcb7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "illuminate/support": "^5.0|^6.0|^7.0|^8.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.*"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Aceraven777\\PayMaya\\PayMayaServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aceraven777\\PayMaya\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aristheo Lacdao",
+                    "email": "aceraven777@gmail.com"
+                }
+            ],
+            "description": "PayMaya Payment integration to Laravel",
+            "support": {
+                "issues": "https://github.com/aceraven777/laravel-paymaya/issues",
+                "source": "https://github.com/aceraven777/laravel-paymaya/tree/master"
+            },
+            "time": "2020-09-02T01:27:28+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "v0.1.1",
