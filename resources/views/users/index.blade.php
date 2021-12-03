@@ -84,6 +84,33 @@
         	}, 800);
         });
 
+		function filterGlobal () {
+		    $('#table').DataTable().search(
+		        $('#global_filter').val(),
+		        $('#global_regex').prop('checked'),
+		        $('#global_smart').prop('checked')
+		    ).draw();
+		}
+		 
+		function filterColumn ( i ) {
+		    $('#table').DataTable().column( i ).search(
+		        $('#col'+i+'_filter').val(),
+		        $('#col'+i+'_regex').prop('checked'),
+		        $('#col'+i+'_smart').prop('checked')
+		    ).draw();
+		}
+		 
+		$(document).ready(function() {
+		 
+		    $('input.global_filter').on( 'keyup click', function () {
+		        filterGlobal();
+		    } );
+		 
+		    $('input.column_filter').on( 'keyup click', function () {
+		        filterColumn( $(this).parents('tr').attr('data-column') );
+		    } );
+		} );
+
         function initializeActions(){
 	    	$('[data-original-title="View User"]').on('click', user => {
 	    		$.ajax({
