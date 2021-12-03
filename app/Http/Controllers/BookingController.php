@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Transactions, Tracker};
+use App\Models\{Transactions, Tracker, Variable};
 use App\User;
 use Image;
 
@@ -11,10 +11,12 @@ class BookingController extends Controller
 {
 	public function index(){
 		$sellers = User::where("role", 'Seller')->select(['id', 'fname', 'lname'])->get();
+		$price = Variable::where('name', 'price')->latest()->first();
 
 		return $this->_view('create', [
 			"title" => 'Add Transaction',
-			"sellers" => $sellers
+			"sellers" => $sellers,
+			"price" => $price ? $price->value : null
 		]);
 	}
 

@@ -116,6 +116,10 @@ Route::group([
 
 		Route::get('getIncome', 'TransactionsController@getIncome')->name('getIncome');
 
+		// VARIABLE
+		Route::get('variable/get', 'VariableController@get')->name('variable.get');
+		Route::get('variable/update', 'VariableController@update')->name('variable.update');
+
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');

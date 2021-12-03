@@ -102,9 +102,9 @@
                             </div>
                             <div class="col-md-2">
                                 <p style="margin-bottom: 3px;"><span id="eta2">Select Location</span> </p>
-                                <p style="margin-bottom: 3px;">&#8369;300.00</p>
+                                <p style="margin-bottom: 3px;">&#8369;{{ $price ?? "300.00" }}</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="overM">0.00</span> (Distance: <span id="distance">0.0</span> KM)</p>
-                                <p style="margin-bottom: 3px;">&#8369;<span id="total">300.00</span></p>
+                                <p style="margin-bottom: 3px;">&#8369;<span id="total">{{ $price ?? "300.00" }}</span></p>
                             </div>
                         </div>
 
@@ -556,8 +556,8 @@
                     $('#distance').text(distance);
                     $('#eta').val(eta);
                     $('#eta2').text(eta);
-                    $('#total').text((300.00 + parseFloat(temp)).toFixed(2));
-                    $('#price').val((300.00 + parseFloat(temp)).toFixed(2));
+                    $('#total').text(({{ $price ?? 300.00 }} + parseFloat(temp)).toFixed(2));
+                    $('#price').val(({{ $price ?? 300.00 }} + parseFloat(temp)).toFixed(2));
                 }
             }
         }

@@ -678,7 +678,9 @@
 	    	}, 15000);
     	}
 
+    	@if(auth()->user()->role == "Seller")
     	renewETA();
+    	@endif
     	function renewETA(){
     		$.ajax({
     			url: '{{ route('getAll') }}',
@@ -774,5 +776,42 @@
     			}
     		})
     	}
+
+    	$('#price').on('click', e => {
+    		$.ajax({
+    			url: '{{ route('variable.get') }}',
+    			data: {name: 'price'},
+    			success: result => {
+    				swal({
+    					title: 'Price',
+    					input: 'number',
+    					inputValue: result ? result : 300,
+    					inputAttributes: {
+    						min: 300,
+    					},
+    					showCancelButton: true,
+    					cancelButtonColor: '#00a65a',
+    					cancelButtonText: 'Update',
+    				}).then(result => {
+    					console.log(result);
+    					if(result.dismiss == "cancel"){
+    						console.log('Update Price');
+    						let price = $('.swal2-input').val();
+
+    						$.ajax({
+    							url: '{{ route('variable.update') }}',
+    							data: {
+    								name: 'price',
+    								value: parseInt(price).toFixed(2),
+    							},
+    							success: result => {
+    								swalNotification('success', "Price Successfully Updated!");
+    							}
+    						})
+    					}
+    				});
+    			}
+    		});
+    	});
 	</script>
 @endpush
