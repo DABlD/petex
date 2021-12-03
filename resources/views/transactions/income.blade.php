@@ -221,7 +221,7 @@
 			    	tableString += `
 			    		<tr>
 			    			<td>${date}</td>
-			    			<td>&#8369;${parseFloat(result[date]).toFixed(2)}</td>
+			    			<td>&#8369;${parseFloat(result[date] * .25).toFixed(2)}</td>
 			    		</tr>
 			    	`;
 			    });
