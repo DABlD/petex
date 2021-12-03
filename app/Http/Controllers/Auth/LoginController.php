@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Models\Tracker;
 use Illuminate\Http\Request;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -53,10 +54,17 @@ class LoginController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
-            if(auth()->user()->role == "Rider"){
-                Tracker::where('uid', auth()->user()->id)->update(['logged_in' => "Yes"]);
+            if(auth()->user()->email_verified_at == null){
+                $request->session()->flash('error', 'Your account is not yet verified by admin');
+                Auth::logout();
+                return "Not Verified";
             }
-            return $this->sendLoginResponse($request);
+            else{
+                if(auth()->user()->role == "Rider"){
+                    Tracker::where('uid', auth()->user()->id)->update(['logged_in' => "Yes"]);
+                }
+                return $this->sendLoginResponse($request);   
+            }
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts

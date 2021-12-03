@@ -237,6 +237,13 @@
             });
         @endif
 
+        @if (Session::has('error'))    
+            swal({
+                type: 'error',
+                text: '{{ Session::get('error') }}'
+            });
+        @endif
+
         @if(Session::has('success'))
             swal({
                 type: 'success',
@@ -274,9 +281,6 @@
                 return { login: login, password: password }
             }
         }).then(result => {
-            console.log(result);
-            console.log(result.cancel);
-            console.log(result.cancel == "dismiss");
             if(result.value){
                 $.ajax({
                     type: 'post',
@@ -290,7 +294,16 @@
                         swal("Logging in...");
                         swal.showLoading();
                         setTimeout(() => {
-                            window.location.href = "{{ route('dashboard') }}";
+                            if(response == "Not Verified"){
+                                swal({
+                                    type: 'info',
+                                    title: 'Your account is still disabled',
+                                    text: 'Please wait for admin to activate your account'
+                                });
+                            }
+                            else{
+                                window.location.href = "{{ route('dashboard') }}";
+                            }
                         }, 2000);
                     },
                     error: response => {

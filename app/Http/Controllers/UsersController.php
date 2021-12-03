@@ -72,8 +72,13 @@ class UsersController extends Controller
         }
     }
 
-    public function delete(User $user){
-        $user->deleted_at = now()->toDateTimeString();
+    public function disable(User $user){
+        $user->email_verified_at = null;
+        echo $user->save();
+    }
+
+    public function activate(User $user){
+        $user->email_verified_at = now()->toDateTimeString();
         echo $user->save();
     }
 

@@ -73,7 +73,8 @@ Route::group([
 		Route::get('users/edit/{user}', 'UsersController@edit')->name('users.edit');
 		Route::post('users/update', 'UsersController@update')->name('users.update');
 
-		Route::get('users/delete/{user}', 'UsersController@delete')->name('users.delete');
+		Route::get('users/disable/{user}', 'UsersController@disable')->name('users.disable');
+		Route::get('users/activate/{user}', 'UsersController@activate')->name('users.activate');
 
 		// SELLER
 

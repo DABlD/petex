@@ -168,23 +168,47 @@
 	    		window.location.href = "users/edit/" + $(user.target).data('id');
 	    	});
 
-	    	$('[data-original-title="Delete User"]').on('click', user => {
+	    	$('[data-original-title="Disable User"]').on('click', user => {
 	    		swal({
 	    			type: 'warning',
-	    			title: 'Are you sure you want to delete?',
+	    			title: 'Are you sure you want to disable this user?',
 	    			showCancelButton: true,
 	    			allowOutsideClick: false,
 	    			cancelButtonColor: '#f76c6b',
 	    		}).then(choice => {
 	    			if(choice.value){
 	    				$.ajax({
-	    					url: 'users/delete/' + $(user.target).data('id'),
+	    					url: 'users/disable/' + $(user.target).data('id'),
 	    					success: result => {
 	    						$('#table').DataTable().ajax.reload();
 
 	    						swalNotification(
 	    							result? 'success' : 'error',
-	    							result? 'Successfully deleted' : 'Try Again',
+	    							result? 'Successfully disabled' : 'Try Again',
+	    						);
+	    					}
+	    				});
+	    			}
+	    		});
+	    	});
+
+	    	$('[data-original-title="Activate User"]').on('click', user => {
+	    		swal({
+	    			type: 'warning',
+	    			title: 'Are you sure you want to activate this user?',
+	    			showCancelButton: true,
+	    			allowOutsideClick: false,
+	    			cancelButtonColor: '#f76c6b',
+	    		}).then(choice => {
+	    			if(choice.value){
+	    				$.ajax({
+	    					url: 'users/activate/' + $(user.target).data('id'),
+	    					success: result => {
+	    						$('#table').DataTable().ajax.reload();
+
+	    						swalNotification(
+	    							result? 'success' : 'error',
+	    							result? 'Successfully activated' : 'Try Again',
 	    						);
 	    					}
 	    				});
