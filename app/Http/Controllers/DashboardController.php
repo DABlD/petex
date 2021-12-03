@@ -68,7 +68,7 @@ class DashboardController extends Controller
     		['created_at', '>=', $from],
     		['created_at', '<=', $to],
     		['sid', 'like', $id]
-    	])->select('created_at')->get();
+    	])->select(['created_at', 'price', 'status'])->get();
 
     	// $days = now()->parse($from)->diff(now()->parse($to))->format("%a");
     	$labels = array();
@@ -91,7 +91,7 @@ class DashboardController extends Controller
     		$temp1 = now()->parse($temp1)->addDay()->toDateString();
     	}
 
-    	echo json_encode($labels);
+        echo json_encode(['labels' => $labels, 'transactions' => $transactions]);
     }
 
     private function _view($view, $data = array()){

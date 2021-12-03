@@ -121,21 +121,6 @@
 
               </div>
 
-              @if(auth()->user()->role == "Admin")
-                <hr style="width: 95%; border-top: 1px solid grey;">
-                  <center>
-                    <h4 style="color: #f76c6b;">
-                      <b>
-                        Heatmap of Cancelled Bookings
-                      </b>
-                    </h4>
-                  </center>
-                <hr style="width: 95%; border-top: 1px solid grey;">
-              <div class="box-body">
-                  <div id="map" style="width: 100%; height: 80vh; position: block;"></div>
-              </div>
-
-              @endif
               <div class="box-footer clearfix">
               </div>
 
@@ -145,11 +130,84 @@
 
       @endif
 
+    {{-- TABLE --}}
+    @if(auth()->user()->role == "Admin")
+      <div class="row">
+      {{-- TABLE --}}
+      <section class="col-lg-6">
+        <div class="box box-info">
+
+          <div class="box-header with-border">
+            Income Table
+          </div>
+
+          <div class="box-body">
+            <table class="table table-hover table-bordered" id="table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Income</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="box-footer clearfix">
+          </div>
+
+        </div>
+      </section>
+
+      {{-- PIE CHART --}}
+      <section class="col-lg-6">
+        <div class="box box-info">
+
+          <div class="box-header with-border">
+            Pie Chart
+          </div>
+
+          <div class="box-body">
+            <div class="box-body col-md-2"></div>
+            <div class="box-body col-md-6">
+              <canvas id="chart-2"></canvas>
+            </div>
+            <div class="box-body col-md-4"></div>
+          </div>
+
+          <div class="box-footer clearfix">
+          </div>
+
+        </div>
+      </section>
+
+      <section class="col-lg-12">
+        <div class="box box-info">
+
+          <div class="box-header with-border">
+            Heatmap of Cancelled Bookings
+          </div>
+
+          <div class="box-body">
+            <div class="box-body">
+                <div id="map" style="width: 100%; height: 80vh; position: block;"></div>
+            </div>
+          </div>
+
+          <div class="box-footer clearfix">
+          </div>
+
+        </div>
+      </section>
+      </div>
+    @endif
+
     </section>
 @endsection
 
 @push('after-styles')
   <link rel="stylesheet" href="{{ asset('css/flatpickr.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/datatables.css') }}">
 @endpush
 
 @push('before-scripts')
@@ -157,6 +215,7 @@
     <script src="{{ asset('js/moment.js') }}"></script>
     <script src="{{ asset('js/charts.min.js') }}"></script>
     <script src="{{ asset('js/flatpickr.js') }}"></script>
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endpush
 
 @push('after-scripts')
@@ -878,6 +937,8 @@
         setDates();
       });
 
+      // CHARTS
+      $('#table').DataTable();
       var chart = new Chart(
         document.getElementById('chart-1'),
         {
@@ -905,7 +966,28 @@
          }
       );
 
+      var chart2 = new Chart(
+      document.getElementById('chart-2'),
+      {
+         type: 'pie',
+         data: {
+           labels: ["Delivered", "Cancelled", "Rider Cancel"],
+           datasets: [{
+             label: "Transaction Status",
+             backgroundColor: [
+               'rgb(255, 99, 132)',
+               'rgb(54, 162, 235)',
+               'rgb(255, 205, 86)'
+             ],
+             hoverOffset: 4,
+             data: [0,0,0]
+           }]
+         },
+       }
+      );
+
       $('#from, #to').change(e => {
+        let init = true;
         let from = $('#from').val();
         let to = $('#to').val();
 
@@ -920,13 +1002,57 @@
           },
           success: result => {
             result = JSON.parse(result);
+            console.log(result);
+            transactions = result.transactions;
+            result = result.labels;
+            let label = init? "Past week income" : moment(from).format("MMM DD, YYYY") + " - " + moment(to).format("MMM DD, YYYY");
 
+            // LINE CHART DATA
             chart.config.data.labels = Object.keys(result);
-            chart.config.data.datasets[0].label = moment(from).format("MMM DD, YYYY") + " - " + moment(to).format("MMM DD, YYYY");
+            chart.config.data.datasets[0].label = label;
             chart.config.data.datasets[0].data = Object.values(result);
             chart.update();
 
-            console.log(result);
+            // PIE CHART DATA
+            let status = [];
+            status["Delivered"] = 0;
+            status["Cancelled"] = 0;
+            status["Rider Cancel"] = 0;
+            status["No Delivery"] = 0;
+
+            transactions.forEach(row => {
+              status[row.status]++;
+            });
+            chart2.config.data.datasets[0].data = [status["Delivered"], status["Cancelled"], status["Rider Cancel"]];
+            chart2.update();
+
+            $('#table').DataTable().destroy();
+            // TABLE DATA
+            let tableString = "";
+            let prices = [];
+            Object.keys(result).forEach(date => {
+              prices[date] = parseFloat(0);
+              tableString += `
+                <tr>
+                  <td>${date}</td>
+                  <td id="${date}"></td>
+                </tr>
+              `;
+            });
+            $('#table tbody').html(tableString);
+
+            transactions.forEach(transaction => {
+              if(transaction.status == "Delivered"){
+                let date = moment(transaction.created_at).format('MMM D, YY');
+                prices[date] += parseFloat(transaction.price);
+              }
+            });
+
+            Object.keys(result).forEach(date => {
+              $(`[id="${date}"]`).html(parseFloat(prices[date] * .75).toFixed(2));
+            });
+            
+            $('#table').DataTable();
           }
         });
       });
