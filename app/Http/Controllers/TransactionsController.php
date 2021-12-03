@@ -31,7 +31,7 @@ class TransactionsController extends Controller
             ['created_at', '>=', $from],
             ['created_at', '<=', $to],
             ['tid', 'like', auth()->user()->id]
-        ])->select(['created_at', 'price'])->get();
+        ])->select(['created_at', 'price', 'status'])->get();
 
         // $days = now()->parse($from)->diff(now()->parse($to))->format("%a");
         $labels = array();
@@ -54,7 +54,7 @@ class TransactionsController extends Controller
             $temp1 = now()->parse($temp1)->addDay()->toDateString();
         }
 
-        echo json_encode($labels);
+        echo json_encode(['labels' => $labels, 'transactions' => $transactions]);
     }
 
     private function _view($view, $data = array()){
