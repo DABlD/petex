@@ -73,6 +73,21 @@ class TransactionsController extends Controller
         return Excel::download(new TransactionsExport($from, $to, $title), $title . " Report.xlsx");
     }
 
+    public function payment($type, $id, Request $req){
+        if($type == "success"){
+            $transaction = Transactions::where('sid', $id)->latest()->first();
+            $transaction->paid = true;
+            $transaction->save();
+
+            $req->session()->flash('success', 'Booking has been paid');
+        }
+        else{
+            $req->session()->flash('error', 'Booking ' . $type);
+        }
+
+        return redirect()->route('transactions.index');
+    }
+
     private function _view($view, $data = array()){
     	return view('transactions.' . $view, $data);
     }

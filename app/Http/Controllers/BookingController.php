@@ -30,9 +30,9 @@ class BookingController extends Controller
 			"created_at" => now()->toDateTimeString(),
 			"updated_at" => now()->toDateTimeString()
 		];
-		Transactions::insert(array_merge($req->except(['_token', 'size']), $array));
-		$req->session()->flash('success', 'Transaction added successfully');
-		return redirect()->route('transactions.index');
+		echo Transactions::insert(array_merge($req->except(['_token', 'size']), $array));
+		// $req->session()->flash('success', 'Transaction added successfully');
+		// return redirect()->route('transactions.index');
 	}
 
 	// SMS

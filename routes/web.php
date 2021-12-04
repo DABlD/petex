@@ -123,6 +123,9 @@ Route::group([
 		// EXPORT
 		Route::get('export/transactions/{from}/{to}', 'TransactionsController@export')->name('export.transactions');
 
+		// PAYMENT
+		Route::get('payment/{type}/{id}', 'TransactionsController@payment');
+
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');

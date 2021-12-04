@@ -78,6 +78,13 @@
 
                                 <br>
 
+                                <h3><b>Will be paid by:</b></h3>
+                                <input type="radio" name="paid_by" value="Seller" checked> Seller<br>
+                                <input type="radio" name="paid_by" value="Customer"> Customer<br>
+
+                                <br>
+
+                                <h3><b>Size:</b></h3>
                                 <input type="radio" name="size" value="Small" checked> Small (12" to 19")<br>
                                 <input type="radio" name="size" value="Medium"> Medium (15" to 22")<br>
                                 <input type="radio" name="size" value="Large"> Large (21" to 25")<br>
@@ -90,8 +97,6 @@
                                 <input type="hidden" name="eta" id="eta">
 
                                 <br>
-
-
                             </div>
 
                             <div class="col-md-8">
@@ -208,7 +213,7 @@
     <script src="{{ asset('js/flatpickr.js') }}"></script>
     <script src="{{ asset('js/moment.js') }}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWhOJBEOFENT7gJA-p_Zqwhkfmae8RR_o&libraries=places&callback=mapInit"></script>
-    <!--<script src="https://unpkg.com/paymaya-js-sdk@2.0.0/dist/bundle.js"></script>-->
+    <script src="https://unpkg.com/paymaya-js-sdk@2.0.0/dist/bundle.js"></script>
 @endpush
 
 @push('after-scripts')
@@ -272,15 +277,17 @@
             // IF THERE IS NO ERROR. SUBMIT.
             setTimeout(() => {
                 swal.close();
-                !$('.is-invalid').is(':visible')? $('#createForm').submit() : '';
-                // !$('.is-invalid').is(':visible')? submit() : '';
+                // !$('.is-invalid').is(':visible')? $('#createForm').submit() : '';
+                !$('.is-invalid').is(':visible')? submit() : '';
             }, 1000)
         });
 
-        function testPay(){
-            const myExampleObject = {
+        function pay(price){
+            console.log('paying');
+
+            const object = {
               "totalAmount": {
-                "value": 100,
+                "value": price,
                 "currency": "PHP",
               },
               "items": [
@@ -288,61 +295,93 @@
                   "name": "Delivery",
                   "quantity": 1,
                   "amount": {
-                    "value": 100,
+                    "value": price,
                     "details": {
                       "discount": 0,
                       "serviceCharge": 0,
                       "shippingFee": 0,
                       "tax": 0,
-                      "subtotal": 100
+                      "subtotal": price
                     }
                   },
                   "totalAmount": {
-                    "value": 100,
+                    "value": price,
                     "details": {
-                      "subtotal": 100
+                      "subtotal": price
                     }
                   }
                 }
               ],
+              "redirectUrl": {
+                "success": "http://127.0.0.1:8000/payment/success/{{ auth()->user()->id }}",
+                "failure": "http://127.0.0.1:8000/payment/failure/{{ auth()->user()->id }}",
+                "cancel": "http://127.0.0.1:8000/payment/cancel/{{ auth()->user()->id }}"
+              },
               "requestReferenceNumber": moment().format("YYYYMMDDhhmmss"),
             };
 
+            console.log(object);
+
             PayMayaSDK.init('pk-yaj6GVzYkce52R193RIWpuRR5tTZKqzBWsUeCkP9EAf', true);
-            PayMayaSDK.createCheckout(myExampleObject);
+            PayMayaSDK.createCheckout(object);
         }
         
-        // function submit(){
-        //     let schedule = $('[name="schedule"]').val();
-        //     let fname = $('[name="fname"]').val();
-        //     let lname = $('[name="lname"]').val();
-        //     let contact = $('[name="contact"]').val();
-        //     let address = $('[name="address"]').val();
-        //     let comments = $('[name="comments"]').val();
-        //     let lat = $('[name="lat"]').val();
-        //     let lng = $('[name="lng"]').val();
-        //     let price = $('[name="price"]').val();
-        //     let eta = $('[name="eta"]').val();
+        function submit(){
+            let schedule = $('[name="schedule"]').val();
+            let fname = $('[name="fname"]').val();
+            let lname = $('[name="lname"]').val();
+            let contact = $('[name="contact"]').val();
+            let address = $('[name="address"]').val();
+            let comments = $('[name="comments"]').val();
+            let lat = $('[name="lat"]').val();
+            let lng = $('[name="lng"]').val();
+            let price = $('[name="price"]').val();
+            let eta = $('[name="eta"]').val();
+            let paid_by = $('[name="paid_by"]:checked').val();
             
-        //     $.ajax({
-        //         url: '{{ route('transactions.store') }}',
-        //         data: {
-        //             schedule = schedule,
-        //             fname = fname,
-        //             lname = lname,
-        //             contact = contact,
-        //             address = address,
-        //             comments = comments,
-        //             lat = lat,
-        //             lng = lng,
-        //             price = price,
-        //             eta = eta
-        //         },
-        //         success: result => {
-        //             testPay(price);
-        //         }
-        //     })
-        // }
+            $.ajax({
+                url: '{{ route('transactions.store') }}',
+                type: 'POST',
+                data: {
+                    _token: $('[name="_token"]').val(),
+                    schedule: schedule,
+                    fname: fname,
+                    lname: lname,
+                    contact: contact,
+                    address: address,
+                    comments: comments,
+                    lat: lat,
+                    lng: lng,
+                    price: price,
+                    eta: eta,
+                    paid_by: paid_by
+                },
+                success: result => {
+                    swal({
+                        type: 'success',
+                        title: 'Successfully booked',
+                        showConfirmButton: false,
+                        timer: 1000,
+                    }).then(() => {
+                        if(paid_by == "Seller"){
+                            swal({
+                                title: 'Proceeding to payment',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                onOpen: () => {
+                                    swal.showLoading();
+                                }
+                            }).then(() => {
+                                pay(price);
+                            })
+                        }
+                        else{
+                            window.location.href = "../transactions";
+                        }
+                    });
+                }
+            })
+        }
 
         // function testPay(price){
         //     const myExampleObject = {
