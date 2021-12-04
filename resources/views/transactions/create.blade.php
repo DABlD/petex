@@ -78,12 +78,20 @@
 
                                 <br>
 
+                                <input type="radio" name="size" value="Small" checked> Small (12" to 19")<br>
+                                <input type="radio" name="size" value="Medium"> Medium (15" to 22")<br>
+                                <input type="radio" name="size" value="Large"> Large (21" to 25")<br>
+
+                                <br>
+
                                 <input type="hidden" name="lat" id="lat">
                                 <input type="hidden" name="lng" id="lng">
                                 <input type="hidden" name="price" id="price">
                                 <input type="hidden" name="eta" id="eta">
 
                                 <br>
+
+
                             </div>
 
                             <div class="col-md-8">
@@ -102,7 +110,7 @@
                             </div>
                             <div class="col-md-2">
                                 <p style="margin-bottom: 3px;"><span id="eta2">Select Location</span> </p>
-                                <p style="margin-bottom: 3px;">&#8369;{{ $price ?? "300.00" }}</p>
+                                <p style="margin-bottom: 3px;" id="bf">&#8369;{{ $price ?? "300.00" }}</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="overM">0.00</span> (Distance: <span id="distance">0.0</span> KM)</p>
                                 <p style="margin-bottom: 3px;">&#8369;<span id="total">{{ $price ?? "300.00" }}</span></p>
                             </div>
@@ -512,13 +520,19 @@
         }
 
         function calculate(){
+            let temp2 = $('[name="size"]:checked').val();
+            let ctr = temp2 == "Small" ? 0 : temp2 == "Medium" ? 1 : 2;
+
             if($('#address').val() == ""){
-                swal({
-                    type: 'error',
-                    title: 'Must Select Address First',
-                    timer: 800,
-                    showConfirmButton: false
-                })
+                // swal({
+                //     type: 'error',
+                //     title: 'Must Select Address First',
+                //     timer: 800,
+                //     showConfirmButton: false
+                // });
+
+                $('#total').text(({{ $price ?? 300.00 }} + (ctr * 200)).toFixed(2));
+                $('#price').val(({{ $price ?? 300.00 }} + (ctr * 200)).toFixed(2));
             }
             else{
                 var request = {
@@ -548,18 +562,24 @@
                     let distance = (response.rows[0].elements[0].distance.value / 1000).toFixed(2);
                     let duration = response.rows[0].elements[0].duration.valu / 60;
 
-
                     let eta = response.rows[0].elements[0].duration.text;
                     let temp = distance <= 2 ? distance * 0 : (Math.ceil(distance - 2) * 40).toFixed(2);
-                    
+
                     $('#overM').text(temp);
                     $('#distance').text(distance);
                     $('#eta').val(eta);
                     $('#eta2').text(eta);
-                    $('#total').text(({{ $price ?? 300.00 }} + parseFloat(temp)).toFixed(2));
-                    $('#price').val(({{ $price ?? 300.00 }} + parseFloat(temp)).toFixed(2));
+                    $('#total').text(({{ $price ?? 300.00 }} + (ctr * 200) + parseFloat(temp)).toFixed(2));
+                    $('#price').val(({{ $price ?? 300.00 }} + (ctr * 200) + parseFloat(temp)).toFixed(2));
                 }
             }
         }
+
+        $('[name="size"]').on('change', () => {
+            let temp = $('[name="size"]:checked').val();
+            let ctr = temp == "Small" ? 0 : temp == "Medium" ? 1 : 2;
+            $('#bf').html("₱" + ({{ $price ?? 300.00 }} + (ctr * 200)).toFixed(2));
+            calculate();
+        });
     </script>
 @endpush
