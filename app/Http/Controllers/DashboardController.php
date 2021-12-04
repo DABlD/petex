@@ -21,6 +21,7 @@ class DashboardController extends Controller
 	    		'deliveries' => Transactions::whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'cancelled' => Transactions::where('status', 'Cancelled')->whereRaw('Date(created_at) = CURDATE()')->get()->count(),
 	    		'all_cancelled' => json_encode(Transactions::whereIn('status', ['Cancelled', 'Rider Cancel'])->select(['lat', 'lng'])->get()),
+	    		'all_delivered' => json_encode(Transactions::where('status', 'Delivered')->select(['lat', 'lng'])->get())
 	    	]);
 	    }
 	    else if(auth()->user()->role == "Seller"){

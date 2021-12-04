@@ -186,6 +186,10 @@
 
           <div class="box-header with-border">
             Heatmap of Cancelled Bookings
+
+            <div class="pull-right">
+              <button class="btn-info" onclick="toggle()">Toggle</button>
+            </div>
           </div>
 
           <div class="box-body">
@@ -909,23 +913,56 @@
       
       @if(auth()->user()->role == "Admin")
 
+      var heatmap;
+      var data = [];
+      const gradient = [
+        "rgba(0, 255, 255, 0)",
+        "rgba(0, 255, 255, 1)",
+        "rgba(0, 191, 255, 1)",
+        "rgba(0, 127, 255, 1)",
+        "rgba(0, 63, 255, 1)",
+        "rgba(0, 0, 255, 1)",
+        "rgba(0, 0, 223, 1)",
+        "rgba(0, 0, 191, 1)",
+        "rgba(0, 0, 159, 1)",
+        "rgba(0, 0, 127, 1)",
+        "rgba(63, 0, 91, 1)",
+        "rgba(127, 0, 63, 1)",
+        "rgba(191, 0, 31, 1)",
+        "rgba(255, 0, 0, 1)",
+      ];
+
+      data["selected"] = "data1";
+      data['data1'] = [];
+      data['data2'] = [];
+
       function initMap2(lat, lng){
         map = new google.maps.Map(document.getElementById("map"), {
             center: {lat: lat, lng: lng},
             zoom: 12,
         });
+        let cancelled = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
+        let delivered = JSON.parse("{{ $all_delivered }}".replace(/&quot;/g,'"'));
 
-        let data = [];
-        let marks = JSON.parse("{{ $all_cancelled }}".replace(/&quot;/g,'"'));
-
-        marks.forEach(a => {
-          data.push(new google.maps.LatLng(a.lat, a.lng));
+        cancelled.forEach(a => {
+          data["data1"].push(new google.maps.LatLng(a.lat, a.lng));
         });
 
-        var heatmap = new google.maps.visualization.HeatmapLayer({
-          data: data
+        delivered.forEach(a => {
+          data["data2"].push(new google.maps.LatLng(a.lat, a.lng));
+        });
+
+        heatmap = new google.maps.visualization.HeatmapLayer({
+          data: data[data['selected']],
+          radius: 50
         });
         heatmap.setMap(map);
+      }
+
+      function toggle(){
+        data["selected"] = data["selected"] == "data1" ? "data2" : "data1";
+        heatmap.set('gradient', heatmap.get("gradient") ? null : gradient);
+        heatmap.set('data', data[data["selected"]]);
       }
       
       @endif
