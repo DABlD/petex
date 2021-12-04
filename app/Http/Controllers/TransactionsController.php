@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transactions;
 
+use App\Exports\TransactionsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class TransactionsController extends Controller
 {
     public function __construct(){
@@ -55,6 +58,19 @@ class TransactionsController extends Controller
         }
 
         echo json_encode(['labels' => $labels, 'transactions' => $transactions]);
+    }
+
+    public function export($from, $to){
+        if($from != "NA"){
+            $from = now()->parse($from)->toFormattedDateString();
+        }
+        else{
+            $from = null;
+        }
+        $to = now()->parse($to)->toFormattedDateString();
+
+        $title = $from ? "$from - $to" : "$to";
+        return Excel::download(new TransactionsExport($from, $to, $title), $title . " Report.xlsx");
     }
 
     private function _view($view, $data = array()){

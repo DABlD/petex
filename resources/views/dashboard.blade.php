@@ -111,6 +111,10 @@
                     <span class="fa fa-close"></span>
                   </a>
                 </div>
+
+                <a class="btn btn-success pull-right" id="export" data-toggle="tooltip" title="Export">
+                  <span class="fa fa-print"></span>
+                </a>
               </div>
 
               <div class="box-body">
@@ -1101,5 +1105,20 @@
         });
       });
     @endif
+
+    $('#export').on('click', () => {
+      let from = $('#from').val();
+      let to = $('#to').val();
+
+      if(from == "" && to == ""){
+        to = moment().format("YYYY-MM-DD");
+      }
+
+      if(from != "" && to == ""){
+        to = from;
+      }
+
+      window.location.href = `export/transactions/${from == "" ? "NA" : from}/${to}`;
+    });
   </script>
 @endpush

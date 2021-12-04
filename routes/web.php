@@ -120,6 +120,9 @@ Route::group([
 		Route::get('variable/get', 'VariableController@get')->name('variable.get');
 		Route::get('variable/update', 'VariableController@update')->name('variable.update');
 
+		// EXPORT
+		Route::get('export/transactions/{from}/{to}', 'TransactionsController@export')->name('export.transactions');
+
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');
