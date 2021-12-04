@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Transactions, Tracker, Variable};
+use App\Models\{Transactions, Tracker, Variable, Incentive};
 use App\User;
 use Image;
 
@@ -307,8 +307,21 @@ class BookingController extends Controller
 // 			$message = 'Delivery to ' . $transaction->fname . ' ' . $transaction->lname . ' has been completed';
 // 			$this->itexmo($transaction->scontact, $message);
 // 		}
+		$this->checkIncentives();
 
 		echo Transactions::where('id', $req->id)->update(["proof" => "uploads/" . $name, 'status' => "Delivered", 'delivery_time' => now()->toDateTimeString()]);
+	}
+
+	public function checkIncentives(){
+		$count = Transactions::where([
+			['tid', '=', auth()->user()->id],
+			['created_at', 'LIKE', now()->toDateString() . '%'],
+			['status', '=', 'Delivered']
+		])->count();
+
+		if($count == 1 || $count == 6 || $count == 9){
+			Incentive::create(['user_id' => auth()->user()->id, 'amount' => 100.00]);
+		}
 	}
 
 	public function getAll(Request $req){

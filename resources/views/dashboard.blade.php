@@ -1052,7 +1052,6 @@
           },
           success: result => {
             result = JSON.parse(result);
-            console.log(result);
             transactions = result.transactions;
             result = result.labels;
             let label = init? "Past week income" : moment(from).format("MMM DD, YYYY") + " - " + moment(to).format("MMM DD, YYYY");

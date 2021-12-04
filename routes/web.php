@@ -126,6 +126,9 @@ Route::group([
 		// PAYMENT
 		Route::get('payment/{type}/{id}', 'TransactionsController@payment');
 
+		// TEST
+		Route::get('checkIncentives', 'BookingController@checkIncentives')->name('checkIncentives');
+
 		// DATATABLE ROUTES
 		Route::get('datatables/users', 'DatatablesController@users')->name('datatables.users');
 		Route::get('datatables/transactions', 'DatatablesController@transactions')->name('datatables.transactions');

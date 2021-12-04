@@ -48,6 +48,8 @@
 							<tr>
 								<th>Date</th>
 								<th>Income</th>
+				                <th>Incentives</th>
+				                <th>Total</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -192,6 +194,9 @@
 			  success: result => {
 			    result = JSON.parse(result);
 			    transactions = result.transactions;
+	            incentives = result.incentives;
+	            console.log(result);
+
 			    result = result.labels;
 			    let label = init? "Past week income" : moment(from).format("MMM DD, YYYY") + " - " + moment(to).format("MMM DD, YYYY");
 
@@ -221,7 +226,9 @@
 			    	tableString += `
 			    		<tr>
 			    			<td>${date}</td>
-			    			<td>&#8369;${parseFloat(result[date] * .25).toFixed(2)}</td>
+			    			<td>&#8369;${(parseFloat(result[date]) - parseFloat(incentives[date])).toFixed(2)}</td>
+			    			<td>&#8369;${parseFloat(incentives[date]).toFixed(2)}</td>
+			    			<td>&#8369;${parseFloat(result[date]).toFixed(2)}</td>
 			    		</tr>
 			    	`;
 			    });

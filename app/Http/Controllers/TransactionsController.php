@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transactions;
+use App\Models\{Transactions, Incentive};
 
 use App\Exports\TransactionsExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -36,8 +36,15 @@ class TransactionsController extends Controller
             ['tid', 'like', auth()->user()->id]
         ])->select(['created_at', 'price', 'status'])->get();
 
+        $tIncentives = Incentive::where([
+            ['user_id', '=' ,auth()->user()->id],
+            ['created_at', '>=', $from],
+            ['created_at', '<=', $to]
+        ])->get();
+
         // $days = now()->parse($from)->diff(now()->parse($to))->format("%a");
         $labels = array();
+        $incentives = array();
 
         $temp1 = now()->parse($from)->toDateString();
         $temp2 = now()->parse($to)->toDateString();
@@ -45,19 +52,29 @@ class TransactionsController extends Controller
         while($temp1 <= $temp2){
             $curDay = now()->parse($temp1)->format('M j, y');
             $labels[$curDay] = 0;
+            $incentives[$curDay] = 0;
 
             foreach($transactions as $transaction){
                 $td = now()->parse($transaction->created_at)->toDateString();
 
                 if($td == $temp1){
-                    $labels[$curDay] += $transaction->price;
+                    $labels[$curDay] += $transaction->price * .25;
+                }
+            }
+
+            foreach($tIncentives as $tIncentive){
+                $td = now()->parse($tIncentive->created_at)->toDateString();
+
+                if($td == $temp1){
+                    $incentives[$curDay] += $tIncentive->amount;
+                    $labels[$curDay] += $tIncentive->amount;
                 }
             }
 
             $temp1 = now()->parse($temp1)->addDay()->toDateString();
         }
 
-        echo json_encode(['labels' => $labels, 'transactions' => $transactions]);
+        echo json_encode(['labels' => $labels, 'transactions' => $transactions, 'incentives' => $incentives]);
     }
 
     public function export($from, $to){
