@@ -1014,25 +1014,27 @@
          }
       );
 
-      var chart2 = new Chart(
-      document.getElementById('chart-2'),
-      {
-         type: 'pie',
-         data: {
-           labels: ["Delivered", "Cancelled", "Rider Cancel"],
-           datasets: [{
-             label: "Transaction Status",
-             backgroundColor: [
-               'rgb(255, 99, 132)',
-               'rgb(54, 162, 235)',
-               'rgb(255, 205, 86)'
-             ],
-             hoverOffset: 4,
-             data: [0,0,0]
-           }]
-         },
-       }
-      );
+      @if(auth()->user()->role != "Seller")
+        var chart2 = new Chart(
+        document.getElementById('chart-2'),
+        {
+           type: 'pie',
+           data: {
+             labels: ["Delivered", "Cancelled", "Rider Cancel"],
+             datasets: [{
+               label: "Transaction Status",
+               backgroundColor: [
+                 'rgb(255, 99, 132)',
+                 'rgb(54, 162, 235)',
+                 'rgb(255, 205, 86)'
+               ],
+               hoverOffset: 4,
+               data: [0,0,0]
+             }]
+           },
+         }
+        );
+      @endif
 
       $('#from, #to').change(e => {
         let init = true;
@@ -1071,8 +1073,11 @@
             transactions.forEach(row => {
               status[row.status]++;
             });
-            chart2.config.data.datasets[0].data = [status["Delivered"], status["Cancelled"], status["Rider Cancel"]];
-            chart2.update();
+
+            @if(auth()->user()->role != "Seller")
+              chart2.config.data.datasets[0].data = [status["Delivered"], status["Cancelled"], status["Rider Cancel"]];
+              chart2.update();
+            @endif
 
             $('#table').DataTable().destroy();
             // TABLE DATA
