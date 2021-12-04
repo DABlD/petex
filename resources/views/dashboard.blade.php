@@ -248,6 +248,13 @@
             zoom: 12,
         });
 
+        let cur = new google.maps.Marker({
+          position: {lat: lat, lng: lng},
+          map,
+        });
+
+        markers.push(cur);
+
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer();
         distance = new google.maps.DistanceMatrixService();
